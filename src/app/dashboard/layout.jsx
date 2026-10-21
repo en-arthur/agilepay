@@ -42,10 +42,11 @@ export default function DashboardLayout({ children }) {
     { label: 'Settings', href: '/dashboard/settings', icon: Settings },
   ];
 
-  // Social sellers don't need the Developer Portal
+  // Developer dashboard: remove Payment Links
+  // Social seller dashboard: remove Developer Portal
   const navItems =
     accountType === 'developer'
-      ? allNavItems
+      ? allNavItems.filter((item) => item.href !== '/dashboard/links')
       : allNavItems.filter((item) => item.href !== '/dashboard/developers');
 
   return (
@@ -101,15 +102,25 @@ export default function DashboardLayout({ children }) {
             </div>
           </div>
 
-          {/* Quick Create Action */}
+          {/* Quick Action Button */}
           <div className="px-4 py-3">
-            <button
-              onClick={() => setDrawerOpen(true)}
-              className="w-full py-2.5 px-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-glow-sm hover:shadow-glow transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              <span>+ Create Payment Link</span>
-            </button>
+            {accountType === 'developer' ? (
+              <Link
+                href="/dashboard/developers"
+                className="w-full py-2.5 px-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-glow-sm hover:shadow-glow transition-all"
+              >
+                <Code2 className="w-4 h-4" />
+                <span>Developer Portal</span>
+              </Link>
+            ) : (
+              <button
+                onClick={() => setDrawerOpen(true)}
+                className="w-full py-2.5 px-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold flex items-center justify-center gap-2 shadow-glow-sm hover:shadow-glow transition-all"
+              >
+                <Plus className="w-4 h-4" />
+                <span>+ Create Payment Link</span>
+              </button>
+            )}
           </div>
 
           {/* Nav Items */}
@@ -135,25 +146,9 @@ export default function DashboardLayout({ children }) {
           </nav>
         </div>
 
-        {/* User Balance & Avatar Bottom Bar */}
-        <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
-          {/* Balance card */}
-          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800">
-            <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-              <span className="flex items-center gap-1">
-                <Wallet className="w-3.5 h-3.5 text-brand-500" />
-                <span>Settled Wallet</span>
-              </span>
-              <span className="text-emerald-500 font-bold">Auto MoMo</span>
-            </div>
-            <p className="text-base font-extrabold text-slate-900 dark:text-white">
-              GHS 14,250.00
-            </p>
-            <p className="text-[10px] text-slate-400">≈ $919.35 USD (Base Rail)</p>
-          </div>
-
-          {/* User profile */}
-          <div className="flex items-center justify-between pt-1">
+        {/* User Avatar Bottom Bar */}
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-500 text-white font-bold text-xs flex items-center justify-center">
                 SH
@@ -316,16 +311,28 @@ export default function DashboardLayout({ children }) {
             </div>
 
             <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
-              <button
-                onClick={() => {
-                  setMobileSidebarOpen(false);
-                  setDrawerOpen(true);
-                }}
-                className="w-full py-2.5 rounded-xl bg-brand-600 text-white text-xs font-semibold mb-3"
-              >
-                + Create Payment Link
-              </button>
-              <p className="text-xs text-slate-400 text-center">Shoe Haven Ghana · GHS 14,250</p>
+              {accountType === 'developer' ? (
+                <Link
+                  href="/dashboard/developers"
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className="w-full py-2.5 rounded-xl bg-brand-600 text-white text-xs font-semibold mb-3 flex items-center justify-center gap-2"
+                >
+                  <Code2 className="w-4 h-4" />
+                  <span>Developer Portal</span>
+                </Link>
+              ) : (
+                <button
+                  onClick={() => {
+                    setMobileSidebarOpen(false);
+                    setDrawerOpen(true);
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-brand-600 text-white text-xs font-semibold mb-3 flex items-center justify-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>+ Create Payment Link</span>
+                </button>
+              )}
+              <p className="text-xs text-slate-400 text-center">Shoe Haven Ghana</p>
             </div>
           </div>
         </div>
