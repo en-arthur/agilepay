@@ -4,7 +4,6 @@ import React from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import HeroPreview from '@/components/HeroPreview';
 import Calculator from '@/components/Calculator';
 import {
   Zap,
@@ -18,7 +17,6 @@ import {
   Smartphone,
   CreditCard,
   Building2,
-  ExternalLink,
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -36,7 +34,7 @@ export default function LandingPage() {
           {/* Top pill badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-brand-500/30 bg-brand-500/10 text-brand-600 dark:text-brand-300 text-xs font-semibold mb-8 animate-fade-in">
             <span className="flex h-2 w-2 rounded-full bg-brand-500 animate-ping" />
-            <span>Next-Gen Rails: 0% FX Markup · Instant MoMo Off-ramp</span>
+            <span>Receive funds in your local currency: Receive funds in GHS, NGN, or KES automatically</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </div>
 
@@ -55,7 +53,7 @@ export default function LandingPage() {
           </p>
 
           {/* CTA Buttons */}
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="mt-10 flex items-center justify-center">
             <Link
               href="/signup"
               className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-base shadow-glow hover:shadow-glow-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
@@ -63,18 +61,32 @@ export default function LandingPage() {
               <span>Start Building</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
-
-            <Link
-              href="/pay/8492"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold text-base transition-all flex items-center justify-center gap-2"
-            >
-              <span>Explore Demo Checkout</span>
-              <ExternalLink className="w-4 h-4 text-brand-500" />
-            </Link>
           </div>
 
-          {/* Floating UI Preview / Code Snippet */}
-          <HeroPreview />
+          {/* Platform Preview Image Container */}
+          <div className="w-full max-w-5xl mx-auto mt-12">
+            <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0E1321] shadow-2xl aspect-[16/9] flex items-center justify-center group">
+              <div className="absolute -inset-4 bg-gradient-to-r from-brand-500/20 via-indigo-600/15 to-violet-500/20 blur-3xl -z-10 pointer-events-none rounded-3xl" />
+              <img
+                src="/dashboard-preview.png"
+                alt="AgilePay Platform Preview"
+                className="w-full h-full object-cover hidden"
+              />
+              <div className="text-center space-y-3 p-8">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-violet-400 flex items-center justify-center text-white shadow-glow mx-auto">
+                  <Zap className="w-8 h-8 fill-white stroke-none" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    AgilePay Platform & Checkout Preview
+                  </h3>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                    Image preview area (place your screenshot or image here)
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

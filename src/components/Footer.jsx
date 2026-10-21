@@ -51,7 +51,7 @@ export default function Footer() {
         </div>
 
         {/* Links Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12">
           {/* Col 1: Brand */}
           <div className="col-span-2">
             <div className="flex items-center gap-2">
@@ -135,19 +135,6 @@ export default function Footer() {
                   REST API Reference
                 </a>
               </li>
-            </ul>
-          </div>
-
-          {/* Col 4: Regions & Rails */}
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
-              Settlement Rails
-            </h4>
-            <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-              <li>🇬🇭 Ghana (MTN MoMo)</li>
-              <li>🇳🇬 Nigeria (NIP Direct Bank)</li>
-              <li>⚡ Base Network USDC</li>
-              <li>💳 Visa / Mastercard / Apple Pay</li>
             </ul>
           </div>
         </div>
