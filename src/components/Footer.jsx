@@ -45,7 +45,7 @@ export default function Footer() {
             <CheckCircle2 className="w-6 h-6 text-sky-500 shrink-0" />
             <div>
               <p className="text-xs font-bold text-slate-800 dark:text-slate-200">Local MoMo Ready</p>
-              <p className="text-[11px] text-slate-500">MTN, Telecel, M-Pesa</p>
+              <p className="text-[11px] text-slate-500">MTN Mobile Money</p>
             </div>
           </div>
         </div>
@@ -96,14 +96,6 @@ export default function Footer() {
                   Fee Calculator
                 </Link>
               </li>
-              <li>
-                <span className="inline-flex items-center gap-1.5">
-                  <span>WhatsApp Bot</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-semibold">
-                    Live
-                  </span>
-                </span>
-              </li>
             </ul>
           </div>
 
@@ -152,9 +144,8 @@ export default function Footer() {
               Settlement Rails
             </h4>
             <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-              <li>🇬🇭 Ghana (MTN MoMo, Telecel)</li>
+              <li>🇬🇭 Ghana (MTN MoMo)</li>
               <li>🇳🇬 Nigeria (NIP Direct Bank)</li>
-              <li>🇰🇪 Kenya (Safaricom M-Pesa)</li>
               <li>⚡ Base Network USDC</li>
               <li>💳 Visa / Mastercard / Apple Pay</li>
             </ul>

@@ -23,7 +23,7 @@ import {
 export default function SignUpPage() {
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
-  const { showToast } = useApp();
+  const { showToast, setAccountType: setGlobalAccountType } = useApp();
 
   const [step, setStep] = useState(1);
   const [fullName, setFullName] = useState('');
@@ -50,6 +50,7 @@ export default function SignUpPage() {
       return;
     }
     setIsLoading(true);
+    setGlobalAccountType(accountType);
     showToast(`Welcome to AgilePay, ${businessName || 'Merchant'}! Initializing workspace...`);
     setTimeout(() => {
       router.push('/dashboard');

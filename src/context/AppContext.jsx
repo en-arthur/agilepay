@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const AppContext = createContext(null);
 
@@ -202,6 +202,7 @@ const INITIAL_WEBHOOK_LOGS = [
 
 export function AppProvider({ children }) {
   const [isSandbox, setIsSandbox] = useState(false);
+  const [accountType, setAccountTypeState] = useState('developer'); // 'developer' | 'social_seller'
   const [links, setLinks] = useState(INITIAL_LINKS);
   const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
   const [apiKeys, setApiKeys] = useState(INITIAL_API_KEYS);
@@ -223,6 +224,18 @@ export function AppProvider({ children }) {
       setToastMessage(null);
     }, 3800);
   };
+
+  const setAccountType = (type) => {
+    setAccountTypeState(type);
+    localStorage.setItem('agilepay_account_type', type);
+  };
+
+  useEffect(() => {
+    const saved = localStorage.getItem('agilepay_account_type');
+    if (saved === 'developer' || saved === 'social_seller') {
+      setAccountTypeState(saved);
+    }
+  }, []);
 
   const createPaymentLink = (newLinkData) => {
     const id = Math.floor(1000 + Math.random() * 9000).toString();
@@ -324,6 +337,8 @@ export function AppProvider({ children }) {
       value={{
         isSandbox,
         setIsSandbox,
+        accountType,
+        setAccountType,
         links,
         transactions,
         createPaymentLink,

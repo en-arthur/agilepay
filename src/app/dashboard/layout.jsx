@@ -24,22 +24,29 @@ import {
   Menu,
   X,
   Wallet,
+  Smartphone,
 } from 'lucide-react';
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
-  const { isSandbox, setIsSandbox } = useApp();
+  const { isSandbox, setIsSandbox, accountType } = useApp();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  const navItems = [
+  const allNavItems = [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { label: 'Payment Links', href: '/dashboard/links', icon: Link2 },
     { label: 'Transactions', href: '/dashboard/transactions', icon: ArrowLeftRight },
     { label: 'Developer Portal', href: '/dashboard/developers', icon: Code2 },
     { label: 'Settings', href: '/dashboard/settings', icon: Settings },
   ];
+
+  // Social sellers don't need the Developer Portal
+  const navItems =
+    accountType === 'developer'
+      ? allNavItems
+      : allNavItems.filter((item) => item.href !== '/dashboard/developers');
 
   return (
     <div className="min-h-screen flex bg-slate-50 dark:bg-[#080B14] text-slate-900 dark:text-slate-100">
@@ -184,6 +191,21 @@ export default function DashboardLayout({ children }) {
             >
               <Menu className="w-5 h-5" />
             </button>
+
+            {/* Account Type Badge */}
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/30 text-xs font-bold">
+              {accountType === 'developer' ? (
+                <>
+                  <Code2 className="w-3 h-3" />
+                  <span>Developer</span>
+                </>
+              ) : (
+                <>
+                  <Smartphone className="w-3 h-3" />
+                  <span>Social Seller</span>
+                </>
+              )}
+            </div>
 
             {/* Sandbox Notice Banner */}
             {isSandbox ? (

@@ -11,7 +11,6 @@ import {
   DollarSign,
   Smartphone,
   Plus,
-  MessageSquare,
   CheckCircle2,
   Clock,
   ExternalLink,
@@ -21,14 +20,16 @@ import {
   Filter,
   Sparkles,
   Zap,
+  Code2,
+  Share2,
+  QrCode,
 } from 'lucide-react';
 
 export default function MerchantDashboard() {
-  const { links, transactions, isSandbox, showToast } = useApp();
+  const { links, transactions, isSandbox, showToast, accountType } = useApp();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedLink, setCopiedLink] = useState(null);
-  const [botActive, setBotActive] = useState(true);
 
   // Filter transactions based on search
   const filteredTransactions = transactions.filter(
@@ -54,10 +55,12 @@ export default function MerchantDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Merchant Overview
+            {accountType === 'developer' ? 'Merchant Overview' : 'My Store Dashboard'}
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Real-time collection volume, instant MoMo off-ramps, and active payment links
+            {accountType === 'developer'
+              ? 'Real-time collection volume, instant MoMo off-ramps, and active payment links'
+              : 'Track your sales, create payment links, and get paid instantly'}
           </p>
         </div>
 
@@ -100,18 +103,18 @@ export default function MerchantDashboard() {
         <div className="p-5 rounded-2xl bg-white dark:bg-[#0F1424] border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group hover:border-brand-500/40 transition-all">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Successful Off-Ramps
+              {accountType === 'developer' ? 'Successful Off-Ramps' : 'Payments Received'}
             </span>
             <div className="w-8 h-8 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
           <div className="text-2xl font-black text-slate-900 dark:text-white">
-            184 MoMo / Bank
+            {accountType === 'developer' ? '184 MoMo / Bank' : '87 Orders'}
           </div>
           <div className="mt-1 flex items-center justify-between text-xs">
-            <span className="text-slate-400">Avg speed: 1.2s</span>
-            <span className="text-emerald-500 font-bold">100% Settled</span>
+            <span className="text-slate-400">{accountType === 'developer' ? 'Avg speed: 1.2s' : 'All settled'}</span>
+            <span className="text-emerald-500 font-bold">{accountType === 'developer' ? '100% Settled' : 'Instant Payout'}</span>
           </div>
         </div>
 
@@ -138,84 +141,106 @@ export default function MerchantDashboard() {
         <div className="p-5 rounded-2xl bg-white dark:bg-[#0F1424] border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group hover:border-brand-500/40 transition-all">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Platform Fees Earned
+              {accountType === 'developer' ? 'Platform Fees Earned' : 'Wallet Balance'}
             </span>
             <div className="w-8 h-8 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400 flex items-center justify-center">
               <Sparkles className="w-4 h-4" />
             </div>
           </div>
           <div className="text-2xl font-black text-slate-900 dark:text-white">
-            $248.50 USD
+            {accountType === 'developer' ? '$248.50 USD' : 'GHS 14,250.00'}
           </div>
           <div className="mt-1 flex items-center justify-between text-xs">
-            <span className="text-slate-400">1.0% Partner Split</span>
-            <span className="text-violet-500 font-bold">Auto-accrued</span>
+            <span className="text-slate-400">{accountType === 'developer' ? '1.0% Partner Split' : 'Auto-settled to MoMo'}</span>
+            <span className="text-violet-500 font-bold">{accountType === 'developer' ? 'Auto-accrued' : 'Available'}</span>
           </div>
         </div>
       </div>
 
-      {/* Quick Actions & WhatsApp Bot Section */}
+      {/* Quick Actions Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* WhatsApp Bot Status Card (7 cols) */}
-        <div className="lg:col-span-7 p-6 rounded-2xl bg-gradient-to-r from-emerald-950/30 via-slate-900 to-emerald-900/20 border border-emerald-500/30 shadow-lg relative overflow-hidden flex flex-col justify-between">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-lg">
-                <MessageSquare className="w-5 h-5 fill-white" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-white">
-                    💬 WhatsApp Bot Active
-                  </h3>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500 text-slate-950">
-                    ONLINE
-                  </span>
+        {/* Account-specific card (7 cols) */}
+        {accountType === 'developer' ? (
+          <div className="lg:col-span-7 p-6 rounded-2xl bg-gradient-to-r from-brand-950/40 via-slate-900 to-indigo-950/30 border border-brand-500/30 shadow-lg relative overflow-hidden flex flex-col justify-between">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-lg">
+                  <Code2 className="w-5 h-5" />
                 </div>
-                <p className="text-xs font-mono text-emerald-300 mt-0.5">
-                  +233 24 559 8192 (AgilePay Business AI)
-                </p>
+                <div>
+                  <h3 className="text-base font-bold text-white">Developer Quick Start</h3>
+                  <p className="text-xs text-brand-300 mt-0.5">Integrate with the Python SDK in 3 lines</p>
+                </div>
+              </div>
+              <Link
+                href="/dashboard/developers"
+                className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-brand-500/40 text-brand-300 hover:bg-brand-500/10 transition-colors"
+              >
+                Open Portal
+              </Link>
+            </div>
+
+            <div className="mt-4 p-3.5 rounded-xl bg-slate-950/60 border border-brand-500/20 text-xs font-mono space-y-1">
+              <p className="text-slate-400 text-[11px] uppercase tracking-wider font-sans font-bold">
+                Python SDK example:
+              </p>
+              <p className="text-brand-400">from agilepay import AgilePay</p>
+              <p className="text-slate-300">client = AgilePay(api_key=os.getenv(&quot;AGILEPAY_KEY&quot;))</p>
+              <p className="text-slate-300">charge = client.charges.create(amount=50, currency=&quot;USD&quot;, channel=&quot;momo&quot;)</p>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between text-xs text-slate-400">
+              <span>API Keys active · Webhooks configured</span>
+              <Link
+                href="/dashboard/developers"
+                className="text-brand-400 hover:underline flex items-center gap-1"
+              >
+                <span>View Docs</span>
+                <ExternalLink className="w-3 h-3" />
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="lg:col-span-7 p-6 rounded-2xl bg-gradient-to-r from-emerald-950/30 via-slate-900 to-emerald-900/20 border border-emerald-500/30 shadow-lg relative overflow-hidden flex flex-col justify-between">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-lg">
+                  <Share2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Promote Your Store</h3>
+                  <p className="text-xs text-emerald-300 mt-0.5">Share your payment links anywhere</p>
+                </div>
               </div>
             </div>
 
-            <button
-              onClick={() => {
-                setBotActive(!botActive);
-                showToast(
-                  botActive
-                    ? 'WhatsApp Bot paused'
-                    : 'WhatsApp Bot active and listening for payment commands'
-                );
-              }}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10 transition-colors"
-            >
-              {botActive ? 'Pause Bot' : 'Resume Bot'}
-            </button>
-          </div>
+            <div className="mt-4 space-y-2.5 text-xs text-slate-300">
+              <div className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-950/60 border border-emerald-500/20">
+                <Smartphone className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Share links via SMS or social media — buyers pay with one tap</span>
+              </div>
+              <div className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-950/60 border border-emerald-500/20">
+                <QrCode className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Print QR codes for in-store or flyer checkout</span>
+              </div>
+              <div className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-950/60 border border-emerald-500/20">
+                <Link2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Embed links in emails, invoices, or your website</span>
+              </div>
+            </div>
 
-          <div className="mt-4 p-3.5 rounded-xl bg-slate-950/60 border border-emerald-500/20 text-xs text-slate-300 font-mono space-y-1.5">
-            <p className="text-slate-400 text-[11px] uppercase tracking-wider font-sans font-bold">
-              Recent text command processed:
-            </p>
-            <p className="text-emerald-400">
-              Merchant: &quot;charge $50 for Brown Loafers to Kofi&quot;
-            </p>
-            <p className="text-slate-300">
-              Bot: &quot;Link created 👉 agilepay.me/x/8492. Sent MoMo push prompt to customer.&quot;
-            </p>
+            <div className="mt-4 flex items-center justify-between text-xs text-slate-400">
+              <span>541 total link views this month</span>
+              <Link
+                href="/dashboard/links"
+                className="text-emerald-400 hover:underline flex items-center gap-1"
+              >
+                <span>Manage Links</span>
+                <ExternalLink className="w-3 h-3" />
+              </Link>
+            </div>
           </div>
-
-          <div className="mt-4 flex items-center justify-between text-xs text-slate-400">
-            <span>Linked to MTN MoMo (+233 24 819 2041)</span>
-            <Link
-              href="/dashboard/settings"
-              className="text-emerald-400 hover:underline flex items-center gap-1"
-            >
-              <span>Bot Settings</span>
-              <ExternalLink className="w-3 h-3" />
-            </Link>
-          </div>
-        </div>
+        )}
 
         {/* Quick Payment Link Creator Trigger (5 cols) */}
         <div className="lg:col-span-5 p-6 rounded-2xl bg-white dark:bg-[#0F1424] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
@@ -229,7 +254,7 @@ export default function MerchantDashboard() {
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
               Create a hosted checkout page with zero code. Send the link to buyers on Instagram,
-              WhatsApp, SMS, or Telegram.
+              SMS, or email.
             </p>
           </div>
 

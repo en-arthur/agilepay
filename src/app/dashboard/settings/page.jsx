@@ -6,16 +6,15 @@ import {
   Settings,
   Building2,
   Wallet,
-  MessageSquare,
+  Code2,
+  CheckCircle2,
   Shield,
   Bell,
   Globe,
   Smartphone,
   Banknote,
   Coins,
-  Check,
   ChevronRight,
-  Copy,
   Lock,
   KeyRound,
   Trash2,
@@ -27,9 +26,8 @@ import {
 } from 'lucide-react';
 
 export default function SettingsPage() {
-  const { isSandbox, setIsSandbox, showToast } = useApp();
+  const { isSandbox, setIsSandbox, showToast, accountType, setAccountType } = useApp();
   const [activeSection, setActiveSection] = useState('business');
-  const [copiedReferral, setCopiedReferral] = useState(false);
 
   // Business Profile
   const [businessName, setBusinessName] = useState('Shoe Haven Ghana Ltd.');
@@ -51,15 +49,6 @@ export default function SettingsPage() {
       color: 'text-amber-500',
     },
     {
-      id: 'momo_telecel',
-      type: 'Telecel Cash',
-      label: 'Telecel Cash',
-      number: '+233 50 339 1042',
-      isDefault: false,
-      icon: Smartphone,
-      color: 'text-rose-500',
-    },
-    {
       id: 'bank_sc',
       type: 'Bank Transfer',
       label: 'Standard Chartered',
@@ -79,15 +68,6 @@ export default function SettingsPage() {
     },
   ]);
 
-  // WhatsApp Bot config
-  const [whatsappBot, setWhatsappBot] = useState({
-    enabled: true,
-    number: '+233 24 559 8192',
-    autoReply: true,
-    sendReceipts: true,
-    commandPrefix: '!',
-  });
-
   // Notifications
   const [notifications, setNotifications] = useState({
     paymentEmail: true,
@@ -101,23 +81,9 @@ export default function SettingsPage() {
   // Security
   const [twoFA, setTwoFA] = useState(true);
 
-  const referralCode = 'AGILE-KOFI-8492';
-
-  const handleCopyReferral = () => {
-    navigator.clipboard.writeText(referralCode);
-    setCopiedReferral(true);
-    showToast('Referral code copied to clipboard');
-    setTimeout(() => setCopiedReferral(false), 2000);
-  };
-
   const handleSaveBusiness = (e) => {
     e.preventDefault();
     showToast('Business profile updated successfully');
-  };
-
-  const handleSaveWhatsapp = (e) => {
-    e.preventDefault();
-    showToast('WhatsApp Bot configuration saved');
   };
 
   const handleSaveNotifications = () => {
@@ -140,14 +106,10 @@ export default function SettingsPage() {
     setNotifications((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const toggleWhatsappSetting = (key) => {
-    setWhatsappBot((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
   const sections = [
     { id: 'business', label: 'Business Profile', icon: Building2 },
+    { id: 'account', label: 'Account Experience', icon: accountType === 'developer' ? Code2 : Smartphone },
     { id: 'payouts', label: 'Payout Destinations', icon: Wallet },
-    { id: 'whatsapp', label: 'WhatsApp Bot', icon: MessageSquare },
     { id: 'security', label: 'Security', icon: Shield },
     { id: 'notifications', label: 'Notifications', icon: Bell },
   ];
@@ -162,7 +124,7 @@ export default function SettingsPage() {
             <span>Settings</span>
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Manage your business profile, payout rails, WhatsApp bot, and account security
+            Manage your business profile, developer/seller mode, payout rails, and account security
           </p>
         </div>
       </div>
@@ -323,29 +285,6 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                {/* Referral Code */}
-                <div className="p-4 rounded-xl bg-brand-50/50 dark:bg-brand-950/30 border border-brand-500/20 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">
-                      Merchant Referral Code
-                    </p>
-                    <p className="font-mono text-sm font-bold text-slate-900 dark:text-white mt-1">
-                      {referralCode}
-                    </p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                      Earn 0.5% of referee fees for 12 months
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleCopyReferral}
-                    className="px-3 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
-                  >
-                    {copiedReferral ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copiedReferral ? 'Copied' : 'Copy'}</span>
-                  </button>
-                </div>
-
                 <button
                   type="submit"
                   className="py-2.5 px-5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition-all shadow-glow-sm"
@@ -446,124 +385,119 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* === WhatsApp Bot === */}
-          {activeSection === 'whatsapp' && (
+          {/* === Account Experience / Mode === */}
+          {activeSection === 'account' && (
             <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#0F1424] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-emerald-500" />
-                  WhatsApp Bot Configuration
+                  <Settings className="w-5 h-5 text-brand-500" />
+                  Account Experience & Merchant Mode
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  Let buyers pay by texting commands to your AgilePay WhatsApp Business number
+                  Choose the view and toolset tailored to your business model
                 </p>
               </div>
 
-              {/* Status Banner */}
-              <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-emerald-950/30 to-slate-900 border border-emerald-500/30">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg">
-                    <MessageSquare className="w-5 h-5 text-white fill-white" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-white">WhatsApp Bot</span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${whatsappBot.enabled ? 'bg-emerald-500 text-slate-950' : 'bg-slate-700 text-slate-300'}`}>
-                        {whatsappBot.enabled ? 'ONLINE' : 'PAUSED'}
-                      </span>
+              {/* Mode Selection Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Developer Mode Card */}
+                <div
+                  onClick={() => {
+                    setAccountType('developer');
+                    showToast('Switched to Developer Mode: Developer Portal and API Keys enabled');
+                  }}
+                  className={`p-5 rounded-2xl border cursor-pointer transition-all ${
+                    accountType === 'developer'
+                      ? 'border-brand-500 bg-brand-50/40 dark:bg-brand-950/20 ring-2 ring-brand-500/30'
+                      : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 hover:border-slate-300 dark:hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-md">
+                      <Code2 className="w-5 h-5" />
                     </div>
-                    <p className="text-xs font-mono text-emerald-300 mt-0.5">{whatsappBot.number}</p>
+                    {accountType === 'developer' && (
+                      <span className="flex items-center gap-1 text-[11px] font-bold text-brand-600 dark:text-brand-400 bg-brand-500/10 px-2.5 py-0.5 rounded-full border border-brand-500/20">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>ACTIVE</span>
+                      </span>
+                    )}
                   </div>
+                  <h4 className="text-base font-bold text-slate-900 dark:text-white mb-1">
+                    Developer Mode
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+                    Full access to API keys, webhooks, Python SDK snippets, partner fees, and developer logs.
+                  </p>
+                  <ul className="text-[11px] text-slate-500 space-y-1">
+                    <li className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span>Developer Portal in navigation</span>
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span>Python, Node.js & React SDK endpoints</span>
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span>Webhook tester & event logs</span>
+                    </li>
+                  </ul>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={whatsappBot.enabled}
-                    onChange={() => toggleWhatsappSetting('enabled')}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:bg-emerald-500 transition-colors after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-transform peer-checked:after:translate-x-5" />
-                </label>
+
+                {/* Social Seller Mode Card */}
+                <div
+                  onClick={() => {
+                    setAccountType('social_seller');
+                    showToast('Switched to Social Seller Mode: Simplified storefront view enabled');
+                  }}
+                  className={`p-5 rounded-2xl border cursor-pointer transition-all ${
+                    accountType === 'social_seller'
+                      ? 'border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20 ring-2 ring-emerald-500/30'
+                      : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 hover:border-slate-300 dark:hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md">
+                      <Smartphone className="w-5 h-5" />
+                    </div>
+                    {accountType === 'social_seller' && (
+                      <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>ACTIVE</span>
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="text-base font-bold text-slate-900 dark:text-white mb-1">
+                    Social Seller Mode
+                  </h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+                    Simplified interface focused on 0-code payment links, printable QR codes, and instant mobile receipts.
+                  </p>
+                  <ul className="text-[11px] text-slate-500 space-y-1">
+                    <li className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span>Streamlined sidebar without developer noise</span>
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span>1-click share via SMS, email & social links</span>
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span>Instant MoMo settlement notifications</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
 
-              <form onSubmit={handleSaveWhatsapp} className="space-y-5">
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
-                    WhatsApp Business Number
-                  </label>
-                  <div className="relative">
-                    <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="text"
-                      value={whatsappBot.number}
-                      onChange={(e) => setWhatsappBot((prev) => ({ ...prev, number: e.target.value }))}
-                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
-                    Command Trigger Prefix
-                  </label>
-                  <div className="relative w-32">
-                    <input
-                      type="text"
-                      value={whatsappBot.commandPrefix}
-                      onChange={(e) => setWhatsappBot((prev) => ({ ...prev, commandPrefix: e.target.value }))}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-sm font-mono font-bold focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    />
-                  </div>
-                  <p className="text-[11px] text-slate-400 mt-1.5">
-                    Buyers text <code className="text-brand-500 font-mono">{whatsappBot.commandPrefix}pay 50</code> to generate a link instantly
-                  </p>
-                </div>
-
-                {/* Toggle Settings */}
-                <div className="space-y-3">
-                  {[
-                    { key: 'autoReply', label: 'Auto-reply with payment link', desc: 'Bot responds automatically to incoming messages' },
-                    { key: 'sendReceipts', label: 'Send digital receipts via WhatsApp', desc: 'Deliver confirmation and receipt after payment' },
-                  ].map((item) => (
-                    <label
-                      key={item.key}
-                      className="flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 cursor-pointer"
-                    >
-                      <div>
-                        <span className="text-sm font-semibold text-slate-900 dark:text-white">
-                          {item.label}
-                        </span>
-                        <p className="text-[11px] text-slate-400 mt-0.5">{item.desc}</p>
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={whatsappBot[item.key]}
-                        onChange={() => toggleWhatsappSetting(item.key)}
-                        className="w-5 h-5 rounded text-brand-600 focus:ring-brand-500"
-                      />
-                    </label>
-                  ))}
-                </div>
-
-                {/* Command Reference */}
-                <div className="p-4 rounded-xl bg-[#0A0D15] border border-slate-800 text-xs font-mono space-y-1.5">
-                  <p className="text-slate-400 text-[11px] uppercase tracking-wider font-sans font-bold mb-2">
-                    Supported Text Commands:
-                  </p>
-                  <p className="text-emerald-400">
-                    {whatsappBot.commandPrefix}pay $50 for Brown Loafers
-                  </p>
-                  <p className="text-slate-300">{whatsappBot.commandPrefix}balance — check settled wallet</p>
-                  <p className="text-slate-300">{whatsappBot.commandPrefix}links — list active payment links</p>
-                </div>
-
-                <button
-                  type="submit"
-                  className="py-2.5 px-5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition-all shadow-glow-sm"
-                >
-                  Save WhatsApp Configuration
-                </button>
-              </form>
+              {/* Status Note */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                <Zap className="w-4 h-4 text-brand-500 shrink-0" />
+                <span>
+                  Your active account type is saved locally. You can switch between developer and social seller modes at any time.
+                </span>
+              </div>
             </div>
           )}
 

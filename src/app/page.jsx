@@ -90,14 +90,6 @@ export default function LandingPage() {
               <span>MTN Mobile Money</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-red-500 inline-block" />
-              <span>Telecel Cash</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" />
-              <span>M-Pesa Kenya</span>
-            </div>
-            <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-blue-500 inline-block" />
               <span>Base Network USDC</span>
             </div>
@@ -120,7 +112,7 @@ export default function LandingPage() {
             Everything your business needs to collect and settle globally
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-400">
-            Whether you are writing clean Node.js backend code or selling handmade products over WhatsApp,
+            Whether you are integrating the Python SDK or selling handmade products online,
             AgilePay bridges the gap between global buyers and local wallets.
           </p>
         </div>
@@ -135,13 +127,13 @@ export default function LandingPage() {
               1. 3-Line Developer Integration
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-              Drop-in SDKs and webhooks that get developers up and running in minutes. Complete with
-              type safety, automated retry logic, and sandbox simulation modes.
+              Drop-in Python SDK and webhooks that get developers up and running in minutes. Complete
+              with automated retry logic and sandbox simulation modes.
             </p>
             <ul className="space-y-2 text-xs font-medium text-slate-500 dark:text-slate-400">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Node.js, Python, PHP, and React libraries</span>
+                <span>Python library and SDK</span>
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
@@ -154,17 +146,17 @@ export default function LandingPage() {
             </ul>
           </div>
 
-          {/* Card 2: No-Code & WhatsApp Links */}
+          {/* Card 2: No-Code Payment Links */}
           <div className="p-8 rounded-2xl bg-white dark:bg-[#101524] border border-slate-200 dark:border-slate-800 shadow-lg hover:border-brand-500/50 transition-all group">
             <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <MessageSquare className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-              2. No-Code & WhatsApp Links
+              2. No-Code Payment Links
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-              Generate payment links in seconds or trigger charges via WhatsApp text commands. Turn your
-              Instagram bio, invoice email, or chat conversation into an instant checkout.
+              Generate payment links in seconds. Turn your Instagram bio, invoice email, or social media
+              post into an instant checkout.
             </p>
             <ul className="space-y-2 text-xs font-medium text-slate-500 dark:text-slate-400">
               <li className="flex items-center gap-2">
@@ -173,7 +165,7 @@ export default function LandingPage() {
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>AI WhatsApp bot command triggers</span>
+                <span>Shareable via SMS, email, or social media</span>
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
@@ -188,24 +180,24 @@ export default function LandingPage() {
               <Coins className="w-6 h-6" />
             </div>
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-              3. Stablecoin-Powered Settlement
+              3. Fast Cross-Border Settlement
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-              Cross-border payments routed via Base network USDC, off-ramping automatically into local
-              fiat (GHS, NGN, KES). Say goodbye to 3-day correspondent bank delays.
+              Get paid in dollars and receive the money directly in your local mobile money or bank
+              account. No more waiting days for international bank transfers to clear.
             </p>
             <ul className="space-y-2 text-xs font-medium text-slate-500 dark:text-slate-400">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Sub-second on-chain clearing on Base L2</span>
+                <span>Receive funds in GHS, NGN, or KES automatically</span>
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Lumx rails off-ramp directly to MoMo wallets</span>
+                <span>Money lands in your mobile money wallet instantly</span>
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Zero foreign exchange slippage or chargeback risks</span>
+                <span>No hidden exchange rate markups or surprise fees</span>
               </li>
             </ul>
           </div>
