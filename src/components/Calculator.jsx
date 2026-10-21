@@ -43,7 +43,7 @@ export default function Calculator() {
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-400">
             See how much your business saves by replacing legacy correspondent banking with AgilePay’s
-            Base USDC invisible rails and instant MoMo off-ramps.
+            Base USDC settlement and instant MoMo off-ramps.
           </p>
         </div>
 

@@ -319,7 +319,7 @@ export default function SignUpPage() {
       </div>
 
       <div className="text-center text-xs text-slate-400">
-        AgilePay Invisible Rails · Ghana · Nigeria · Kenya · Global
+        AgilePay · Ghana · Nigeria · Kenya · Global
       </div>
     </div>
   );

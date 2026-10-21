@@ -27,14 +27,9 @@ export default function Navbar() {
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-violet-400 flex items-center justify-center text-white shadow-glow-sm group-hover:scale-105 transition-transform">
             <Zap className="w-5 h-5 fill-white stroke-none" />
           </div>
-          <div className="flex flex-col">
-            <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-              AgilePay
-            </span>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-brand-600 dark:text-brand-400 -mt-1">
-              Invisible Rails
-            </span>
-          </div>
+          <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+            AgilePay
+          </span>
         </Link>
 
         {/* Desktop Navigation Links */}

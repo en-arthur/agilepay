@@ -356,7 +356,7 @@ export default function HostedCheckoutPage() {
       {/* Security Footer */}
       <footer className="max-w-4xl w-full mx-auto text-center pt-8 text-xs text-slate-400 flex items-center justify-center gap-2">
         <ShieldCheck className="w-4 h-4 text-emerald-500" />
-        <span>🔒 Secured by AgilePay Invisible Rails · PCI-DSS Level 1 · Lumx Smart Off-Ramps</span>
+        <span>🔒 Secured by AgilePay · PCI-DSS Level 1 · Instant MoMo Settlement</span>
       </footer>
 
       {/* Processing & Success Modal */}

@@ -44,7 +44,7 @@ export default function LandingPage() {
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-[1.12]">
             Global Collections for African Businesses,{' '}
             <span className="bg-gradient-to-r from-brand-500 via-indigo-400 to-violet-500 bg-clip-text text-transparent">
-              Powered by Invisible Rails.
+              Settled Instantly.
             </span>
           </h1>
 
