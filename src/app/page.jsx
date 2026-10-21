@@ -1,257 +1,331 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Calculator from '@/components/Calculator';
 import {
-  Zap,
   Code2,
   MessageSquare,
   Coins,
   ArrowRight,
-  ShieldCheck,
+  ArrowDownUp,
   CheckCircle2,
   Sparkles,
-  Smartphone,
-  CreditCard,
-  Building2,
+  Zap,
 } from 'lucide-react';
 
 export default function LandingPage() {
+  const [payAmount, setPayAmount] = useState('50.00');
+  const [receiveAmount, setReceiveAmount] = useState('775.00');
+
+  const handleSwapChange = (val) => {
+    setPayAmount(val);
+    const num = parseFloat(val) || 0;
+    setReceiveAmount((num * 15.5).toFixed(2));
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#070A12] text-slate-900 dark:text-slate-100 selection:bg-brand-500 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[var(--bg)] text-[var(--text-body)] selection:bg-[var(--accent)] selection:text-white">
       {/* Top Navigation */}
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative pt-20 pb-24 overflow-hidden">
-        {/* Subtle background glow circles */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-brand-600/20 via-indigo-600/10 to-transparent blur-3xl -z-10 pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {/* Top pill badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-brand-500/30 bg-brand-500/10 text-brand-600 dark:text-brand-300 text-xs font-semibold mb-8 animate-fade-in">
-            <span className="flex h-2 w-2 rounded-full bg-brand-500 animate-ping" />
-            <span>Receive funds in your local currency: Receive funds in GHS, NGN, or KES automatically</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+      <main className="frame">
+        {/* Hero Section */}
+        <section className="hero frame-row">
+          {/* Announcement pill */}
+          <div className="flex justify-center mb-8">
+            <Link href="/dashboard/developers" className="announce group hover:border-[var(--border-strong)] transition-colors">
+              <span className="announce__badge">NEW</span>
+              <span className="text-[var(--text)] text-xs sm:text-sm">
+                Receive funds in your local currency: GHS, NGN, or KES automatically
+              </span>
+              <span className="caret ml-0.5 text-[var(--text-faint)] group-hover:text-[var(--text)] transition-colors" />
+            </Link>
           </div>
 
-          {/* Catchy Headline */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-[1.12]">
+          {/* Headline & Lead */}
+          <h1 className="max-w-4xl mx-auto">
             Global Collections for African Businesses,{' '}
-            <span className="bg-gradient-to-r from-brand-500 via-indigo-400 to-violet-500 bg-clip-text text-transparent">
+            <span className="text-[var(--accent)]">
               Settled Instantly.
             </span>
           </h1>
 
-          {/* Subheadline */}
-          <p className="mt-6 text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="lead mt-6">
             Accept payments from anywhere via Card, Mobile Money, or Crypto. Settle instantly to local
             MoMo or bank accounts with just 3 lines of code or simple no-code links.
           </p>
 
           {/* CTA Buttons */}
-          <div className="mt-10 flex items-center justify-center">
+          <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <Link
               href="/signup"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-base shadow-glow hover:shadow-glow-sm transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
+              className="btn btn--dark w-full sm:w-auto"
             >
               <span>Start Building</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="caret" />
+            </Link>
+
+            <Link
+              href="/dashboard/developers"
+              className="btn btn--secondary w-full sm:w-auto"
+            >
+              <span>View Documentation</span>
             </Link>
           </div>
 
-          {/* Platform Preview Image Container */}
-          <div className="w-full max-w-5xl mx-auto mt-12">
-            <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0E1321] shadow-2xl aspect-[16/9] flex items-center justify-center group">
-              <div className="absolute -inset-4 bg-gradient-to-r from-brand-500/20 via-indigo-600/15 to-violet-500/20 blur-3xl -z-10 pointer-events-none rounded-3xl" />
+          {/* Product Visual: Lumx Diagonal Hatch Panel + Swap Card & Platform Preview */}
+          <div className="mt-14 max-w-5xl mx-auto space-y-8">
+            {/* Lumx Panel Hatch with Swap Card */}
+            <div className="panel-hatch shadow-sm">
+              <div className="swap">
+                <div className="swap__head">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="mono-meta">LIVE RATE: 1 USD = 15.50 GHS · ZERO SPREAD</span>
+                </div>
+
+                {/* From Field */}
+                <div className="swap__field">
+                  <div className="swap__row">
+                    <span className="mono-meta uppercase">Customer Pays</span>
+                    <span className="status status--ok">Base USDC Rail</span>
+                  </div>
+                  <div className="swap__row mt-2.5">
+                    <div className="flex items-baseline">
+                      <input
+                        type="text"
+                        value={payAmount}
+                        onChange={(e) => handleSwapChange(e.target.value)}
+                        className="amount bg-transparent border-none outline-none w-36 font-normal"
+                      />
+                      <span className="unit font-mono text-sm text-[var(--text-faint)]">USD</span>
+                    </div>
+                    <span className="text-xs text-[var(--text-faint)] font-mono">Visa / Mastercard / USDC</span>
+                  </div>
+                </div>
+
+                {/* Central Swap Toggle Button */}
+                <div className="swap__toggle" title="Auto-converted rate">
+                  <ArrowDownUp className="w-3.5 h-3.5" />
+                </div>
+
+                {/* To Field */}
+                <div className="swap__field">
+                  <div className="swap__row">
+                    <span className="mono-meta uppercase">Merchant Receives</span>
+                    <span className="mono-meta text-emerald-600 dark:text-emerald-400 font-semibold">Instant MoMo Off-Ramp</span>
+                  </div>
+                  <div className="swap__row mt-2.5">
+                    <div className="flex items-baseline">
+                      <span className="amount font-normal">{receiveAmount}</span>
+                      <span className="unit font-mono text-sm text-[var(--text-faint)]">GHS</span>
+                    </div>
+                    <span className="text-xs font-mono text-[var(--accent)] font-medium">MTN Mobile Money 🇬🇭</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Platform Preview Image Container */}
+            <div className="relative rounded-[var(--r-lg)] overflow-hidden border border-[var(--border)] bg-[var(--bg-subtle)] shadow-sm aspect-[16/9] flex items-center justify-center">
               <img
                 src="/dashboard-preview.png"
                 alt="AgilePay Platform Preview"
                 className="w-full h-full object-cover hidden"
               />
               <div className="text-center space-y-3 p-8">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-violet-400 flex items-center justify-center text-white shadow-glow mx-auto">
-                  <Zap className="w-8 h-8 fill-white stroke-none" />
+                <div className="w-14 h-14 rounded-[var(--r-md)] bg-[var(--accent-soft)] text-[var(--accent)] flex items-center justify-center mx-auto border border-[var(--accent)]/30">
+                  <Zap className="w-7 h-7 fill-current stroke-none" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-base font-medium text-[var(--text)]">
                     AgilePay Platform & Checkout Preview
                   </h3>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                  <p className="text-xs font-mono text-[var(--text-faint)] mt-1">
                     Image preview area (place your screenshot or image here)
                   </p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Network Logos Bar */}
-      <section className="py-10 border-y border-slate-200 dark:border-slate-800/80 bg-white/50 dark:bg-[#0A0E18]/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-6">
-            Supported Settlement Channels & Financial Partners
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-14 text-slate-500 dark:text-slate-400 font-semibold text-sm">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-amber-400 inline-block" />
-              <span>MTN Mobile Money</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-blue-500 inline-block" />
-              <span>Base Network USDC</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-indigo-500 inline-block" />
-              <span>Visa & Mastercard</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Value Proposition Cards */}
-      <section id="features" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 text-xs font-semibold uppercase tracking-wider mb-3">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Built for Modern Commerce</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Everything your business needs to collect and settle globally
-          </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-400">
-            Whether you are integrating the Python SDK or selling handmade products online,
-            AgilePay bridges the gap between global buyers and local wallets.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Card 1: 3-Line Developer Integration */}
-          <div className="p-8 rounded-2xl bg-white dark:bg-[#101524] border border-slate-200 dark:border-slate-800 shadow-lg hover:border-brand-500/50 transition-all group">
-            <div className="w-12 h-12 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Code2 className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-              1. 3-Line Developer Integration
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-              Drop-in Python SDK and webhooks that get developers up and running in minutes. Complete
-              with automated retry logic and sandbox simulation modes.
-            </p>
-            <ul className="space-y-2 text-xs font-medium text-slate-500 dark:text-slate-400">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Python library and SDK</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Webhook events for every lifecycle status</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Custom partner split fees engine</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Card 2: No-Code Payment Links */}
-          <div className="p-8 rounded-2xl bg-white dark:bg-[#101524] border border-slate-200 dark:border-slate-800 shadow-lg hover:border-brand-500/50 transition-all group">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <MessageSquare className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-              2. No-Code Payment Links
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-              Generate payment links in seconds. Turn your Instagram bio, invoice email, or social media
-              post into an instant checkout.
-            </p>
-            <ul className="space-y-2 text-xs font-medium text-slate-500 dark:text-slate-400">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>1-click short links and QR code generator</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Shareable via SMS, email, or social media</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Customer SMS receipt confirmation</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Card 3: Stablecoin-Powered Settlement */}
-          <div className="p-8 rounded-2xl bg-white dark:bg-[#101524] border border-slate-200 dark:border-slate-800 shadow-lg hover:border-brand-500/50 transition-all group">
-            <div className="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-              <Coins className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
-              3. Fast Cross-Border Settlement
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-              Get paid in dollars and receive the money directly in your local mobile money or bank
-              account. No more waiting days for international bank transfers to clear.
-            </p>
-            <ul className="space-y-2 text-xs font-medium text-slate-500 dark:text-slate-400">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Receive funds in GHS, NGN, or KES automatically</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Money lands in your mobile money wallet instantly</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>No hidden exchange rate markups or surprise fees</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Fee Calculator Section */}
-      <Calculator />
-
-      {/* Merchant Dashboard Preview Banner */}
-      <section className="py-20 bg-slate-100/70 dark:bg-[#0B0F19] border-t border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-brand-900 via-indigo-950 to-slate-900 text-white relative overflow-hidden shadow-2xl border border-brand-800/40">
-            <div className="max-w-2xl relative z-10 space-y-4">
-              <span className="text-xs font-bold uppercase tracking-widest text-brand-300">
-                Merchant Operations Hub
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-                Ready to collect payments in seconds?
-              </h2>
-              <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                Log into the non-code merchant dashboard or use our developer API keys to start accepting
-                real card, MoMo, and crypto payments today.
-              </p>
-              <div className="pt-2 flex flex-wrap gap-4">
-                <Link
-                  href="/dashboard"
-                  className="px-6 py-3 rounded-xl bg-white text-brand-900 font-bold text-sm hover:bg-slate-100 transition-all shadow-md"
-                >
-                  Open Merchant Dashboard
-                </Link>
-                <Link
-                  href="/dashboard/developers"
-                  className="px-6 py-3 rounded-xl border border-brand-400/50 hover:bg-brand-800/40 text-white font-semibold text-sm transition-all"
-                >
-                  View Developer Portal
-                </Link>
+        {/* Network Logos Bar */}
+        <section className="frame-row frame-row--tight bg-[var(--bg-subtle)]">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+            <span className="label">
+              Settlement Partners
+            </span>
+            <div className="flex flex-wrap items-center gap-8 text-xs font-mono text-[var(--text-body)]">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <span>MTN Mobile Money</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                <span>Base Network USDC</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                <span>Visa & Mastercard</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span>NIP Direct Bank</span>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* Foundation & Features Section */}
+        <section id="features" className="frame-row">
+          <div className="max-w-3xl mb-14">
+            <div className="label label--active mb-4">
+              01 / Global Payments
+            </div>
+            <h2>
+              Everything your business needs to collect and settle globally
+            </h2>
+            <p className="lead">
+              Whether you are integrating the Python SDK or selling handmade products online,
+              AgilePay bridges the gap between global buyers and local wallets.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1: 3-Line Developer Integration */}
+            <div className="p-7 rounded-[var(--r-lg)] bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--border-strong)] transition-colors flex flex-col justify-between">
+              <div>
+                <div className="w-10 h-10 rounded-[var(--r-md)] bg-[var(--accent-soft)] text-[var(--accent)] flex items-center justify-center mb-6">
+                  <Code2 className="w-5 h-5" />
+                </div>
+                <div className="label label--active mb-2">SDK & API</div>
+                <h3 className="text-lg font-medium text-[var(--text)] mb-3">
+                  3-Line Developer Integration
+                </h3>
+                <p className="text-sm text-[var(--text-body)] leading-relaxed mb-6">
+                  Drop-in Python SDK and webhooks that get developers up and running in minutes. Complete
+                  with automated retry logic and sandbox simulation modes.
+                </p>
+              </div>
+              <ul className="space-y-2 text-xs font-mono text-[var(--text-faint)] pt-4 border-t border-[var(--border)]">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--accent)]" />
+                  <span>Python library and SDK</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--accent)]" />
+                  <span>Webhook lifecycle events</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--accent)]" />
+                  <span>Partner split fees engine</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Card 2: No-Code Payment Links */}
+            <div className="p-7 rounded-[var(--r-lg)] bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--border-strong)] transition-colors flex flex-col justify-between">
+              <div>
+                <div className="w-10 h-10 rounded-[var(--r-md)] bg-[var(--bg-subtle)] text-[var(--text)] flex items-center justify-center mb-6 border border-[var(--border)]">
+                  <MessageSquare className="w-5 h-5" />
+                </div>
+                <div className="label label--active mb-2">Commerce</div>
+                <h3 className="text-lg font-medium text-[var(--text)] mb-3">
+                  No-Code Payment Links
+                </h3>
+                <p className="text-sm text-[var(--text-body)] leading-relaxed mb-6">
+                  Generate payment links in seconds. Turn your Instagram bio, invoice email, or social media
+                  post into an instant checkout.
+                </p>
+              </div>
+              <ul className="space-y-2 text-xs font-mono text-[var(--text-faint)] pt-4 border-t border-[var(--border)]">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--accent)]" />
+                  <span>1-click short links & QR codes</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--accent)]" />
+                  <span>Shareable via SMS, email & bio</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--accent)]" />
+                  <span>Automatic digital receipts</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Card 3: Stablecoin-Powered Settlement */}
+            <div className="p-7 rounded-[var(--r-lg)] bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--border-strong)] transition-colors flex flex-col justify-between">
+              <div>
+                <div className="w-10 h-10 rounded-[var(--r-md)] bg-[var(--bg-subtle)] text-[var(--text)] flex items-center justify-center mb-6 border border-[var(--border)]">
+                  <Coins className="w-5 h-5" />
+                </div>
+                <div className="label label--active mb-2">Settlement</div>
+                <h3 className="text-lg font-medium text-[var(--text)] mb-3">
+                  Fast Cross-Border Settlement
+                </h3>
+                <p className="text-sm text-[var(--text-body)] leading-relaxed mb-6">
+                  Get paid in dollars and receive the money directly in your local mobile money or bank
+                  account. No more waiting days for international bank transfers.
+                </p>
+              </div>
+              <ul className="space-y-2 text-xs font-mono text-[var(--text-faint)] pt-4 border-t border-[var(--border)]">
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--accent)]" />
+                  <span>Settlement in GHS, NGN, or KES</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--accent)]" />
+                  <span>Immediate local MoMo payout</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 bg-[var(--accent)]" />
+                  <span>Zero hidden FX markups</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Interactive Fee Calculator Section */}
+        <Calculator />
+
+        {/* Merchant Operations Hub CTA */}
+        <section className="frame-row">
+          <div className="p-8 sm:p-12 rounded-[var(--r-lg)] bg-[var(--ink)] text-[var(--bg)] border border-[var(--border-strong)] flex flex-col sm:flex-row sm:items-center justify-between gap-8">
+            <div className="max-w-xl space-y-3">
+              <div className="label label--active !text-[var(--bg)] before:!bg-[var(--accent)]">
+                Merchant Operations Hub
+              </div>
+              <h2 className="!text-[var(--bg)] mb-2">
+                Ready to collect payments in seconds?
+              </h2>
+              <p className="text-sm text-[var(--bg)]/80 leading-relaxed">
+                Log into the non-code merchant dashboard or use our developer API keys to start accepting
+                real card, MoMo, and crypto payments today.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <Link
+                href="/dashboard"
+                className="btn btn--secondary !bg-[var(--bg)] !text-[var(--ink)] text-center"
+              >
+                <span>Merchant Dashboard</span>
+              </Link>
+              <Link
+                href="/dashboard/developers"
+                className="btn btn--primary text-center"
+              >
+                <span>Developer Portal</span>
+                <span className="caret" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
 
       {/* Footer */}
       <Footer />

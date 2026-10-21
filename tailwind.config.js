@@ -9,31 +9,52 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        bg: 'var(--bg)',
+        'bg-subtle': 'var(--bg-subtle)',
+        border: 'var(--border)',
+        'border-strong': 'var(--border-strong)',
+        ink: 'var(--ink)',
+        text: 'var(--text)',
+        'text-body': 'var(--text-body)',
+        'text-faint': 'var(--text-faint)',
+        accent: {
+          DEFAULT: 'var(--accent)',
+          hover: 'var(--accent-hover)',
+          soft: 'var(--accent-soft)',
+          mid: 'var(--accent-mid)',
+        },
         brand: {
-          50: '#EEF2FF',
-          100: '#E0E7FF',
-          200: '#C7D2FE',
-          300: '#A5B4FC',
-          400: '#818CF8',
-          500: '#6366F1', // Accent Deep Indigo
-          600: '#4F46E5',
-          700: '#4338CA',
-          800: '#3730A3',
-          900: '#312E81',
-          950: '#1E1B4B',
+          50: '#f5f3ff',
+          100: '#ede9fe',
+          200: '#ddd6fe',
+          300: '#c4b5fd',
+          400: '#a78bfa',
+          500: '#6b2ddf', // Lumx Signature Violet
+          600: '#5a22c4',
+          700: '#4c1d95',
+          800: '#3b0764',
+          900: '#231d45',
+          950: '#0c0c10',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans: ['"Hanken Grotesk"', '"Geist"', '"Inter"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', '"Geist Mono"', 'ui-monospace', 'Menlo', 'monospace'],
+      },
+      borderRadius: {
+        sm: 'var(--r-sm)',
+        md: 'var(--r-md)',
+        lg: 'var(--r-lg)',
+        pill: 'var(--r-pill)',
       },
       boxShadow: {
-        'glow': '0 0 25px -5px rgba(99, 102, 241, 0.4)',
-        'glow-sm': '0 0 15px -3px rgba(99, 102, 241, 0.3)',
+        card: 'var(--shadow-card)',
+        glow: '0 0 25px -5px rgba(107, 45, 223, 0.4)',
+        'glow-sm': '0 0 15px -3px rgba(107, 45, 223, 0.3)',
       },
-      animation: {
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-      }
+      maxWidth: {
+        container: 'var(--container)',
+      },
     },
   },
   plugins: [],
