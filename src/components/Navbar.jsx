@@ -18,9 +18,9 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[var(--border)] bg-[var(--bg)]/90 backdrop-blur-md transition-colors">
-      <div className="nav px-6 sm:px-8">
+      <div className="nav px-6 sm:px-8 md:grid md:grid-cols-[1fr_auto_1fr] items-center">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
+        <Link href="/" className="flex items-center gap-2.5 group justify-self-start">
           <div className="w-8 h-8 rounded-[var(--r-md)] bg-[var(--accent)] flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105">
             <Zap className="w-4 h-4 fill-white stroke-none" />
           </div>
@@ -29,8 +29,8 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-7 text-[var(--fs-nav)] font-medium text-[var(--text-body)]">
+        {/* Desktop Navigation Links (Centered via 3-column grid) */}
+        <nav className="hidden md:flex items-center justify-center gap-7 text-[var(--fs-nav)] font-medium text-[var(--text-body)] justify-self-center">
           <Link
             href="/#features"
             className="hover:text-[var(--text)] transition-colors"
@@ -59,7 +59,7 @@ export default function Navbar() {
         </nav>
 
         {/* Action Buttons & Theme Toggle */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center justify-end gap-3 justify-self-end">
           <button
             onClick={toggleTheme}
             aria-label="Toggle Theme"

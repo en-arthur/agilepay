@@ -3,10 +3,10 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import { AppProvider } from '@/context/AppContext';
 
 export const metadata = {
-  title: 'AgilePay - Global Collections for African Businesses',
+  title: 'AgilePay - Global Collections for African Businesses & Beyond',
   description:
-    'Accept payments from anywhere via Card, Mobile Money, or Crypto. Settle instantly to local MoMo or bank accounts with 3 lines of code or simple no-code links.',
-  keywords: 'payment gateway, fintech, mobile money, mtn momo, telecel cash, stablecoin, usdc, base network, ghana, nigeria, kenya',
+    'Accept payments from anywhere via Card, Mobile Money, or Crypto. Settle instantly to local MoMo or bank accounts with 3 lines of code or simple no-code links — built for Africa and beyond.',
+  keywords: 'payment gateway, fintech, mobile money, mtn momo, telecel cash, stablecoin, usdc, base network, ghana, kenya',
 };
 
 export default function RootLayout({ children }) {

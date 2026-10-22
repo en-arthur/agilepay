@@ -57,7 +57,7 @@ export default function Footer() {
               <span className="font-medium text-base text-[var(--text)]">AgilePay</span>
             </div>
             <p className="mt-3 text-sm text-[var(--text-body)] max-w-sm leading-relaxed">
-              Global collections for African businesses, settled instantly.
+              Global collections for African businesses & beyond, settled instantly.
               Accept payments via Card, MoMo, or Crypto and settle directly to your bank or mobile wallet.
             </p>
             <div className="mt-4">

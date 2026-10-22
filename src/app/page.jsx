@@ -27,7 +27,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--bg)] text-[var(--text-body)] selection:bg-[var(--accent)] selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[var(--bg)] text-[var(--text-body)] selection:bg-[var(--accent)] selection:text-white w-full overflow-x-hidden">
       {/* Top Navigation */}
       <Navbar />
 
@@ -36,10 +36,10 @@ export default function LandingPage() {
         <section className="hero frame-row">
           {/* Announcement pill */}
           <div className="flex justify-center mb-8">
-            <Link href="/dashboard/developers" className="announce group hover:border-[var(--border-strong)] transition-colors">
+            <Link href="/dashboard/developers" className="announce group hover:border-[var(--border-strong)] transition-colors max-w-full">
               <span className="announce__badge">NEW</span>
               <span className="text-[var(--text)] text-xs sm:text-sm">
-                Receive funds in your local currency: GHS, NGN, or KES automatically
+                Receive funds in your local currency: GHS or KES automatically
               </span>
               <span className="caret ml-0.5 text-[var(--text-faint)] group-hover:text-[var(--text)] transition-colors" />
             </Link>
@@ -47,7 +47,7 @@ export default function LandingPage() {
 
           {/* Headline & Lead */}
           <h1 className="max-w-4xl mx-auto">
-            Global Collections for African Businesses,{' '}
+            Global Collections for African Businesses & Beyond,{' '}
             <span className="text-[var(--accent)]">
               Settled Instantly.
             </span>
@@ -55,7 +55,7 @@ export default function LandingPage() {
 
           <p className="lead mt-6">
             Accept payments from anywhere via Card, Mobile Money, or Crypto. Settle instantly to local
-            MoMo or bank accounts with just 3 lines of code or simple no-code links.
+            MoMo or bank accounts with just 3 lines of code or simple no-code links — built for Africa and beyond.
           </p>
 
           {/* CTA Buttons */}
@@ -173,7 +173,7 @@ export default function LandingPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span>NIP Direct Bank</span>
+                <span>Local Bank Settlement</span>
               </div>
             </div>
           </div>
@@ -275,7 +275,7 @@ export default function LandingPage() {
               <ul className="space-y-2 text-xs font-mono text-[var(--text-faint)] pt-4 border-t border-[var(--border)]">
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 bg-[var(--accent)]" />
-                  <span>Settlement in GHS, NGN, or KES</span>
+                  <span>Settlement in GHS or KES</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 bg-[var(--accent)]" />
