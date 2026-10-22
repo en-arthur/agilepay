@@ -1,5 +1,6 @@
 import './globals.css';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { AuthProvider } from '@/context/AuthContext';
 import { AppProvider } from '@/context/AppContext';
 
 export const metadata = {
@@ -22,9 +23,11 @@ export default function RootLayout({ children }) {
       </head>
       <body className="min-h-screen bg-[var(--bg)] text-[var(--text-body)] font-sans antialiased selection:bg-[var(--accent)] selection:text-white">
         <ThemeProvider>
-          <AppProvider>
-            {children}
-          </AppProvider>
+          <AuthProvider>
+            <AppProvider>
+              {children}
+            </AppProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

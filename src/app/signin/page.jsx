@@ -1,46 +1,57 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useTheme } from '@/context/ThemeContext';
-import { useApp } from '@/context/AppContext';
+import React, { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useTheme } from '@/context/ThemeContext'
+import { useAuth } from '@/context/AuthContext'
+import { useApp } from '@/context/AppContext'
 import {
-  Zap,
-  Lock,
-  Mail,
-  ArrowRight,
-  Sun,
-  Moon,
-  ShieldCheck,
-  CheckCircle,
-} from 'lucide-react';
+  Zap, Lock, Mail, ArrowRight, Sun, Moon, ShieldCheck,
+} from 'lucide-react'
 
 export default function SignInPage() {
-  const router = useRouter();
-  const { theme, toggleTheme } = useTheme();
-  const { showToast } = useApp();
+  const router = useRouter()
+  const { theme, toggleTheme } = useTheme()
+  const { signIn } = useAuth()
+  const { showToast } = useApp()
 
-  const [email, setEmail] = useState('kofi@shoenhaven.com');
-  const [password, setPassword] = useState('••••••••••••');
-  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail]       = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError]       = useState('')
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    showToast('Signing in to AgilePay Merchant Console...');
-    setTimeout(() => {
-      router.push('/dashboard');
-    }, 700);
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
 
-  const handleGoogleAuth = () => {
-    setIsLoading(true);
-    showToast('Authenticated via Google OAuth');
-    setTimeout(() => {
-      router.push('/dashboard');
-    }, 600);
-  };
+    try {
+      await signIn(email, password)
+      showToast('Signed in — welcome back!')
+      router.push('/dashboard')
+    } catch (err) {
+      setError(err.message || 'Invalid email or password')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleGoogleAuth = async () => {
+    setIsLoading(true)
+    setError('')
+    try {
+      const { supabase } = await import('@/lib/supabase')
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options:  { redirectTo: `${window.location.origin}/dashboard` },
+      })
+      if (error) throw error
+    } catch (err) {
+      setError(err.message || 'Google sign-in failed')
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-slate-50 dark:bg-[#070A12] text-slate-900 dark:text-slate-100 p-4 sm:p-8">
@@ -50,9 +61,7 @@ export default function SignInPage() {
           <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white shadow-glow-sm">
             <Zap className="w-4 h-4 fill-white" />
           </div>
-          <span className="font-extrabold text-xl text-slate-900 dark:text-white">
-            AgilePay
-          </span>
+          <span className="font-extrabold text-xl text-slate-900 dark:text-white">AgilePay</span>
         </Link>
 
         <button
@@ -76,7 +85,14 @@ export default function SignInPage() {
             </p>
           </div>
 
-          {/* Social Auth Option */}
+          {/* Error banner */}
+          {error && (
+            <div className="mb-5 px-4 py-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 text-sm font-medium">
+              {error}
+            </div>
+          )}
+
+          {/* Google */}
           <button
             type="button"
             onClick={handleGoogleAuth}
@@ -84,22 +100,10 @@ export default function SignInPage() {
             className="w-full py-2.5 px-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-semibold flex items-center justify-center gap-3 transition-all mb-6 active:scale-[0.99]"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
-              <path
-                fill="#EA4335"
-                d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
-              />
-              <path
-                fill="#4285F4"
-                d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.2c0 2.9.7 5.5 1.9 7.9l3.7-2.9z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16.5C3.7 20.3 7.5 23.5 12 23.5z"
-              />
+              <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
+              <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+              <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.2c0 2.9.7 5.5 1.9 7.9l3.7-2.9z"/>
+              <path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16.5C3.7 20.3 7.5 23.5 12 23.5z"/>
             </svg>
             <span>Continue with Google</span>
           </button>
@@ -111,7 +115,7 @@ export default function SignInPage() {
             </span>
           </div>
 
-          {/* Email / Password Form */}
+          {/* Email / Password */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
@@ -122,6 +126,7 @@ export default function SignInPage() {
                 <input
                   type="email"
                   required
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com"
@@ -135,10 +140,7 @@ export default function SignInPage() {
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">
                   Password
                 </label>
-                <Link
-                  href="/forgot-password"
-                  className="text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline"
-                >
+                <Link href="/forgot-password" className="text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline">
                   Forgot Password?
                 </Link>
               </div>
@@ -147,6 +149,7 @@ export default function SignInPage() {
                 <input
                   type="password"
                   required
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
@@ -158,30 +161,26 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 py-3 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-glow-sm hover:shadow-glow transition-all active:scale-[0.99]"
+              className="w-full mt-2 py-3 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-glow-sm hover:shadow-glow transition-all active:scale-[0.99] disabled:opacity-60"
             >
-              <span>{isLoading ? 'Authenticating...' : 'Sign In to Dashboard'}</span>
+              <span>{isLoading ? 'Signing in…' : 'Sign In to Dashboard'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
 
           <p className="mt-8 text-center text-xs text-slate-500 dark:text-slate-400">
-            Don’t have an AgilePay account?{' '}
-            <Link
-              href="/signup"
-              className="text-brand-600 dark:text-brand-400 font-bold hover:underline"
-            >
+            Don&apos;t have an AgilePay account?{' '}
+            <Link href="/signup" className="text-brand-600 dark:text-brand-400 font-bold hover:underline">
               Sign up free
             </Link>
           </p>
         </div>
       </div>
 
-      {/* Bottom note */}
       <div className="text-center text-xs text-slate-400 flex items-center justify-center gap-2">
         <ShieldCheck className="w-4 h-4 text-emerald-500" />
         <span>Protected with 256-bit bank-grade encryption</span>
       </div>
     </div>
-  );
+  )
 }

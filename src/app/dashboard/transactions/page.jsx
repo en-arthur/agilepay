@@ -1,249 +1,159 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { useApp } from '@/context/AppContext';
+import React, { useState } from 'react'
+import { useApp } from '@/context/AppContext'
 import {
-  ArrowLeftRight,
-  Search,
-  Filter,
-  Download,
-  CheckCircle2,
-  Clock,
-  TrendingUp,
-  DollarSign,
-  Smartphone,
-  CreditCard,
-  Coins,
-  ChevronDown,
-  ArrowUpRight,
-  Receipt,
-  ExternalLink,
-} from 'lucide-react';
+  ArrowLeftRight, Search, Filter, Download, CheckCircle2, Clock,
+  TrendingUp, DollarSign, Smartphone, CreditCard, Coins, ChevronDown,
+  ArrowUpRight, Receipt, RefreshCw,
+} from 'lucide-react'
 
-const CHANNEL_ICONS = {
-  'MoMo (MTN)': Smartphone,
-  'MoMo (Telecel)': Smartphone,
-  'Card (Visa)': CreditCard,
-  'Card (Mastercard)': CreditCard,
-  'USDC Rail': Coins,
-};
+const STATUS_MAP = {
+  'Paid - Settled':   { label: 'Settled',    cls: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' },
+  'Processing':       { label: 'Processing', cls: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20' },
+  'Pending':          { label: 'Pending',    cls: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20' },
+  'Awaiting Funds':   { label: 'Awaiting',  cls: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20' },
+  'Failed':           { label: 'Failed',     cls: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20' },
+  'Cancelled':        { label: 'Cancelled', cls: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20' },
+  'Refunded':         { label: 'Refunded',  cls: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20' },
+}
 
-const CHANNEL_COLORS = {
-  'MoMo (MTN)': 'text-amber-500',
-  'MoMo (Telecel)': 'text-rose-500',
-  'Card (Visa)': 'text-indigo-500',
-  'Card (Mastercard)': 'text-indigo-500',
-  'USDC Rail': 'text-cyan-500',
-};
+function statusStyle(status) {
+  return STATUS_MAP[status] ?? { label: status, cls: 'bg-slate-100 text-slate-600 border-slate-200' }
+}
 
 export default function TransactionsPage() {
-  const { transactions, isSandbox } = useApp();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [channelFilter, setChannelFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [expandedTxId, setExpandedTxId] = useState(null);
+  const { transactions, loadingTransactions, loadTransactions } = useApp()
+  const [searchQuery, setSearchQuery]   = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [expandedId, setExpandedId]     = useState(null)
 
-  const filteredTransactions = transactions.filter((tx) => {
-    const matchesSearch =
-      tx.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesChannel =
-      channelFilter === 'all' || tx.channel.toLowerCase().includes(channelFilter.toLowerCase());
-    const matchesStatus =
+  const filtered = transactions.filter((tx) => {
+    const q = searchQuery.toLowerCase()
+    const matchSearch =
+      (tx.customer || '').toLowerCase().includes(q) ||
+      (tx.reference || '').toLowerCase().includes(q) ||
+      (tx.email || '').toLowerCase().includes(q)
+    const matchStatus =
       statusFilter === 'all' ||
-      (statusFilter === 'paid' && tx.status.includes('Paid')) ||
-      (statusFilter === 'pending' && tx.status.includes('Pending'));
-    return matchesSearch && matchesChannel && matchesStatus;
-  });
+      (statusFilter === 'settled'  && tx.status.includes('Settled')) ||
+      (statusFilter === 'pending'  && (tx.status.includes('Pending') || tx.status.includes('Processing'))) ||
+      (statusFilter === 'failed'   && tx.status.includes('Failed'))
+    return matchSearch && matchStatus
+  })
 
-  // Aggregate metrics
   const totalCollected = transactions
-    .filter((t) => t.status.includes('Paid'))
-    .reduce((sum, t) => sum + t.amount, 0);
-  const totalLocalCollected = transactions
-    .filter((t) => t.status.includes('Paid'))
-    .reduce((sum, t) => sum + t.localAmount, 0);
-  const paidCount = transactions.filter((t) => t.status.includes('Paid')).length;
-  const pendingCount = transactions.filter((t) => t.status.includes('Pending')).length;
+    .filter(t => t.status.includes('Settled'))
+    .reduce((s, t) => s + t.amount, 0)
+  const settledCount = transactions.filter(t => t.status.includes('Settled')).length
+  const pendingCount = transactions.filter(t =>
+    t.status.includes('Pending') || t.status.includes('Processing')).length
 
   const handleExport = () => {
-    const csvHeader = 'Transaction ID,Customer,Email,Date,Amount (USD),Local Amount (GHS),Channel,Rail,Status,Reference\n';
-    const csvRows = filteredTransactions
-      .map(
-        (tx) =>
-          `${tx.id},${tx.customer},${tx.email},${tx.date},${tx.amount},${tx.localAmount},${tx.channel},${tx.rail},${tx.status},${tx.reference}`
-      )
-      .join('\n');
-    const csv = csvHeader + csvRows;
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'agilepay-transactions.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+    const header = 'Charge ID,Customer,Email,Date,Amount,Currency,Status\n'
+    const rows = filtered.map(tx =>
+      `${tx.reference},${tx.customer},${tx.email},${tx.date},${tx.amount},${tx.currency},${tx.status}`
+    ).join('\n')
+    const blob = new Blob([header + rows], { type: 'text/csv' })
+    const url  = URL.createObjectURL(blob)
+    const a    = document.createElement('a')
+    a.href = url; a.download = 'agilepay-transactions.csv'; a.click()
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
             <ArrowLeftRight className="w-7 h-7 text-brand-500" />
-            <span>Transactions</span>
+            Transactions
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Full settlement log with real-time MoMo off-ramp status and Base USDC rail details
+            Live settlement log — USDC off-ramp status and Lumx rail details
           </p>
         </div>
-
-        <button
-          onClick={handleExport}
-          className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm flex items-center gap-2 transition-colors self-start"
-        >
-          <Download className="w-4 h-4 text-brand-500" />
-          <span>Export CSV</span>
-        </button>
+        <div className="flex items-center gap-2 self-start">
+          <button onClick={() => loadTransactions()}
+            className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+            title="Refresh">
+            <RefreshCw className={`w-4 h-4 ${loadingTransactions ? 'animate-spin' : ''}`} />
+          </button>
+          <button onClick={handleExport}
+            className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm flex items-center gap-2 transition-colors">
+            <Download className="w-4 h-4 text-brand-500" />
+            Export CSV
+          </button>
+        </div>
       </div>
 
-      {/* Metrics Overview */}
+      {/* Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#0F1424] border border-slate-200 dark:border-slate-800 shadow-sm hover:border-brand-500/40 transition-all">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Total Collected
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-              <DollarSign className="w-4 h-4" />
+        {[
+          { label: 'Total Collected', value: `$${totalCollected.toFixed(2)}`, sub: `${settledCount} settled`, icon: DollarSign, color: 'emerald' },
+          { label: 'Successful', value: settledCount, sub: 'Off-ramped', icon: CheckCircle2, color: 'brand' },
+          { label: 'Pending', value: pendingCount, sub: 'Awaiting settlement', icon: Clock, color: 'amber' },
+          { label: 'Total', value: transactions.length, sub: 'All time', icon: TrendingUp, color: 'cyan' },
+        ].map((m) => {
+          const Icon = m.icon
+          return (
+            <div key={m.label} className="p-5 rounded-2xl bg-white dark:bg-[#0F1424] border border-slate-200 dark:border-slate-800 shadow-sm hover:border-brand-500/40 transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{m.label}</span>
+                <div className={`w-8 h-8 rounded-lg bg-${m.color}-500/10 text-${m.color}-600 dark:text-${m.color}-400 flex items-center justify-center`}>
+                  <Icon className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="text-2xl font-black text-slate-900 dark:text-white">{m.value}</div>
+              <div className="mt-1 text-xs text-slate-400">{m.sub}</div>
             </div>
-          </div>
-          <div className="text-2xl font-black text-slate-900 dark:text-white">
-            ${totalCollected.toFixed(2)}
-          </div>
-          <div className="mt-1 text-xs text-slate-400">
-            ≈ GH₵ {totalLocalCollected.toFixed(2)}
-          </div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#0F1424] border border-slate-200 dark:border-slate-800 shadow-sm hover:border-brand-500/40 transition-all">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Successful
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl font-black text-slate-900 dark:text-white">
-            {paidCount}
-          </div>
-          <div className="mt-1 flex items-center gap-1 text-xs">
-            <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />
-            <span className="text-emerald-500 font-bold">Settled</span>
-          </div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#0F1424] border border-slate-200 dark:border-slate-800 shadow-sm hover:border-brand-500/40 transition-all">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Pending
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-              <Clock className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl font-black text-slate-900 dark:text-white">
-            {pendingCount}
-          </div>
-          <div className="mt-1 text-xs text-slate-400">Awaiting settlement</div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#0F1424] border border-slate-200 dark:border-slate-800 shadow-sm hover:border-brand-500/40 transition-all">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Avg Settlement
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
-              <TrendingUp className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-2xl font-black text-slate-900 dark:text-white">
-            1.2s
-          </div>
-          <div className="mt-1 text-xs text-emerald-500 font-bold">Instant MoMo</div>
-        </div>
+          )
+        })}
       </div>
 
-      {/* Filters & Transactions Table */}
+      {/* Table */}
       <div className="p-6 rounded-2xl bg-white dark:bg-[#0F1424] border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-              Transaction History
-            </h3>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Transaction History</h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {filteredTransactions.length} of {transactions.length} transactions shown
+              {filtered.length} of {transactions.length} transactions
             </p>
           </div>
-
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            {/* Channel Filter */}
-            <div className="relative flex items-center">
-              <Filter className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
-              <select
-                value={channelFilter}
-                onChange={(e) => setChannelFilter(e.target.value)}
-                className="pl-9 pr-8 py-2 text-xs font-semibold bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 appearance-none cursor-pointer"
-              >
-                <option value="all">All Channels</option>
-                <option value="momo">Mobile Money</option>
-                <option value="card">Card</option>
-                <option value="usdc">USDC Rail</option>
-              </select>
-            </div>
-
-            {/* Status Filter */}
-            <div className="relative flex items-center">
-              <CheckCircle2 className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="pl-9 pr-8 py-2 text-xs font-semibold bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 appearance-none cursor-pointer"
-              >
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative">
+              <Filter className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
+                className="pl-9 pr-8 py-2 text-xs font-semibold bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 appearance-none cursor-pointer">
                 <option value="all">All Statuses</option>
-                <option value="paid">Paid</option>
-                <option value="pending">Pending</option>
+                <option value="settled">Settled</option>
+                <option value="pending">Pending / Processing</option>
+                <option value="failed">Failed</option>
               </select>
             </div>
-
-            {/* Search */}
             <div className="relative w-full sm:w-64">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search by name, ref, email..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+              <input type="text" placeholder="Search by name, charge ID…"
+                value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
               />
             </div>
           </div>
         </div>
 
-        {/* Table */}
-        {filteredTransactions.length === 0 ? (
+        {loadingTransactions ? (
+          <div className="space-y-3">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="h-16 rounded-xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="py-16 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
-              <Receipt className="w-7 h-7 text-slate-400" />
-            </div>
-            <h4 className="text-base font-bold text-slate-900 dark:text-white">
-              No transactions found
-            </h4>
+            <Receipt className="w-12 h-12 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
+            <h4 className="text-base font-bold text-slate-900 dark:text-white">No transactions yet</h4>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Try adjusting your filters or search query
+              Transactions will appear here once payments are processed
             </p>
           </div>
         ) : (
@@ -254,149 +164,84 @@ export default function TransactionsPage() {
                   <th className="pb-3 pl-2">Customer</th>
                   <th className="pb-3">Date</th>
                   <th className="pb-3">Amount</th>
-                  <th className="pb-3">Channel</th>
+                  <th className="pb-3">Rail</th>
                   <th className="pb-3">Status</th>
-                  <th className="pb-3 text-right pr-2">Reference</th>
+                  <th className="pb-3 text-right pr-2">Charge ID</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
-                {filteredTransactions.map((tx) => {
-                  const ChannelIcon = CHANNEL_ICONS[tx.channel] || CreditCard;
-                  const channelColor = CHANNEL_COLORS[tx.channel] || 'text-slate-400';
-                  const isExpanded = expandedTxId === tx.id;
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+                {filtered.map((tx) => {
+                  const isExpanded = expandedId === tx.id
+                  const st = statusStyle(tx.status)
                   return (
                     <React.Fragment key={tx.id}>
-                      <tr
-                        onClick={() => setExpandedTxId(isExpanded ? null : tx.id)}
-                        className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer"
-                      >
+                      <tr onClick={() => setExpandedId(isExpanded ? null : tx.id)}
+                        className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer">
                         <td className="py-3.5 pl-2">
                           <div className="flex items-center gap-2.5">
                             <div className="w-7 h-7 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold flex items-center justify-center text-xs shrink-0">
-                              {tx.customer.substring(0, 2).toUpperCase()}
+                              {(tx.customer || '?').substring(0, 2).toUpperCase()}
                             </div>
                             <div>
-                              <p className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm">
-                                {tx.customer}
-                              </p>
+                              <p className="font-semibold text-slate-900 dark:text-white">{tx.customer || 'Unknown'}</p>
                               <p className="text-[11px] text-slate-400">{tx.email}</p>
                             </div>
                           </div>
                         </td>
-
                         <td className="py-3.5 text-slate-500 dark:text-slate-400">
                           <div className="flex items-center gap-1.5">
                             <Clock className="w-3.5 h-3.5 text-slate-400" />
                             <span>{tx.date}</span>
                           </div>
                         </td>
-
                         <td className="py-3.5">
-                          <div>
-                            <span className="font-bold text-slate-900 dark:text-white text-sm">
-                              ${tx.amount.toFixed(2)} USD
-                            </span>
-                            <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-                              ≈ GH₵ {tx.localAmount.toFixed(2)}
-                            </p>
-                          </div>
+                          <span className="font-bold text-slate-900 dark:text-white">${tx.amount.toFixed(2)}</span>
+                          <p className="text-[11px] text-slate-400">{tx.currency}</p>
                         </td>
-
                         <td className="py-3.5">
-                          <div className="flex items-center gap-2">
-                            <ChannelIcon className={`w-4 h-4 ${channelColor} shrink-0`} />
-                            <div>
-                              <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
-                                {tx.channel}
-                              </span>
-                              <p className="text-[10px] text-slate-400 mt-0.5">{tx.rail}</p>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td className="py-3.5">
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                              tx.status.includes('Paid')
-                                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
-                                : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
-                            }`}
-                          >
-                            <CheckCircle2 className="w-3 h-3" />
-                            <span>{tx.status}</span>
+                          <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                            {tx.channel}
                           </span>
                         </td>
-
+                        <td className="py-3.5">
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${st.cls}`}>
+                            <CheckCircle2 className="w-3 h-3" />
+                            {st.label}
+                          </span>
+                        </td>
                         <td className="py-3.5 text-right pr-2">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <span className="font-mono text-[11px] text-slate-400">
-                              {tx.reference}
-                            </span>
-                            <ChevronDown
-                              className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
-                                isExpanded ? 'rotate-180' : ''
-                              }`}
-                            />
+                          <div className="flex items-center justify-end gap-1">
+                            <span className="font-mono text-[11px] text-slate-400 truncate max-w-[110px]">{tx.reference}</span>
+                            <ChevronDown className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                           </div>
                         </td>
                       </tr>
-
-                      {/* Expanded Detail Row */}
                       {isExpanded && (
                         <tr className="bg-slate-50/50 dark:bg-slate-900/30">
                           <td colSpan={6} className="px-4 sm:px-6 py-5">
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
                               <div>
-                                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                                  Transaction ID
-                                </p>
-                                <p className="font-mono font-bold text-slate-900 dark:text-white">
-                                  {tx.id}
-                                </p>
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Charge ID</p>
+                                <p className="font-mono font-bold text-slate-900 dark:text-white">{tx.reference}</p>
                               </div>
                               <div>
-                                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                                  Settlement Rail
-                                </p>
-                                <p className="font-semibold text-emerald-600 dark:text-emerald-400">
-                                  {tx.rail}
-                                </p>
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Lumx TX</p>
+                                <p className="font-mono text-slate-600 dark:text-slate-300 truncate">{tx.lumx_transaction_id || '—'}</p>
                               </div>
                               <div>
-                                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                                  Customer Email
-                                </p>
-                                <p className="font-medium text-slate-700 dark:text-slate-300">
-                                  {tx.email}
-                                </p>
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Settlement Rail</p>
+                                <p className="font-semibold text-emerald-600 dark:text-emerald-400">{tx.rail}</p>
                               </div>
                               <div>
-                                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                                  Channel
-                                </p>
-                                <p className="font-semibold text-slate-700 dark:text-slate-300">
-                                  {tx.channel}
-                                </p>
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Description</p>
+                                <p className="text-slate-600 dark:text-slate-300">{tx.description || '—'}</p>
                               </div>
-                            </div>
-
-                            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-3">
-                              <span className="text-[11px] text-slate-400">
-                                Digital receipt delivered to {tx.email}
-                              </span>
-                              <Link
-                                href={`/pay/${tx.reference.split('-').pop()}`}
-                                className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline"
-                              >
-                                <ExternalLink className="w-3 h-3" />
-                                <span>View Checkout Page</span>
-                              </Link>
                             </div>
                           </td>
                         </tr>
                       )}
                     </React.Fragment>
-                  );
+                  )
                 })}
               </tbody>
             </table>
@@ -404,5 +249,5 @@ export default function TransactionsPage() {
         )}
       </div>
     </div>
-  );
+  )
 }
