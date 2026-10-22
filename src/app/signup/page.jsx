@@ -8,7 +8,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useApp } from '@/context/AppContext'
 import {
   Zap, Lock, Mail, User, Building, ArrowRight, Sun, Moon,
-  Code2, Smartphone, Check,
+  Code2, Smartphone, Check, Wallet,
 } from 'lucide-react'
 
 const REDIRECT_MAP = {
@@ -29,7 +29,9 @@ export default function SignUpPage() {
   const [email, setEmail]               = useState('')
   const [password, setPassword]         = useState('')
   // Map UI labels → backend account_type values
-  const [accountType, setAccountType]   = useState('DEVELOPER') // DEVELOPER | MERCHANT
+  const [accountType, setAccountType]   = useState('DEVELOPER') // DEVELOPER | MERCHANT | INDIVIDUAL
+  const [taxId,       setTaxId]         = useState('')
+  const [birthDate,   setBirthDate]     = useState('')
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [isLoading, setIsLoading]       = useState(false)
   const [error, setError]               = useState('')
@@ -67,6 +69,8 @@ export default function SignUpPage() {
         business_type: 'INDIVIDUAL',
         country:       'GH',
         account_type:  accountType,
+        // INDIVIDUAL-only fields — ignored by backend for other types
+        ...(accountType === 'INDIVIDUAL' && { tax_id: taxId, birth_date: birthDate }),
       })
 
       showToast(`Welcome to AgilePay, ${fullName}! Signing you in…`)
@@ -229,6 +233,13 @@ export default function SignUpPage() {
                       title: 'Social Seller / Freelancer',
                       desc:  'No-code payment links, instant settlement, zero integration needed.',
                     },
+                    {
+                      value: 'INDIVIDUAL',
+                      icon:  Wallet,
+                      iconColor: 'text-violet-500',
+                      title: 'Individual / Remittance',
+                      desc:  'Fund your wallet and send money to family or friends worldwide.',
+                    },
                   ].map((opt) => (
                     <label key={opt.value}
                       onClick={() => setAccountType(opt.value)}
@@ -252,6 +263,34 @@ export default function SignUpPage() {
                   ))}
                 </div>
               </div>
+
+              {/* INDIVIDUAL extra fields */}
+              {accountType === 'INDIVIDUAL' && (
+                <div className="space-y-3 p-4 rounded-xl bg-violet-50 dark:bg-violet-950/20 border border-violet-200 dark:border-violet-800">
+                  <p className="text-xs font-bold text-violet-700 dark:text-violet-400 uppercase tracking-wider">
+                    Required for Remittance Accounts
+                  </p>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
+                      Tax ID / National ID *
+                    </label>
+                    <input type="text" required={accountType === 'INDIVIDUAL'}
+                      value={taxId} onChange={e => setTaxId(e.target.value)}
+                      placeholder="e.g. SSN, CPF, or national ID number"
+                      className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
+                      Date of Birth *
+                    </label>
+                    <input type="date" required={accountType === 'INDIVIDUAL'}
+                      value={birthDate} onChange={e => setBirthDate(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    />
+                  </div>
+                </div>
+              )}
 
               <label className="flex items-start gap-3 cursor-pointer pt-2">
                 <input type="checkbox" checked={acceptedTerms}
