@@ -180,18 +180,18 @@ export default function DashboardLayout({ children }) {
   )
 
   return (
-    <div className="min-h-screen flex bg-slate-50 dark:bg-[#080B14] text-slate-900 dark:text-slate-100">
+    <div className="h-screen overflow-hidden flex bg-slate-50 dark:bg-[#080B14] text-slate-900 dark:text-slate-100">
       <PaymentDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 flex-col justify-between border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0B0F1A] shrink-0 sticky top-0 h-screen z-30">
+      {/* Desktop Sidebar — fixed height, never scrolls */}
+      <aside className="hidden lg:flex w-64 flex-col justify-between border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0B0F1A] shrink-0 h-full z-30 overflow-y-auto">
         <Sidebar />
       </aside>
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Topbar */}
-        <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-[#0A0D16]/80 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20">
+      {/* Main area — fills remaining space, scrolls independently */}
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+        {/* Topbar — sticks to the top of the main column, not the page */}
+        <header className="h-16 shrink-0 border-b border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-[#0A0D16]/80 backdrop-blur-md px-4 sm:px-8 flex items-center justify-between z-20">
           <div className="flex items-center gap-3">
             <button onClick={() => setMobileSidebarOpen(true)}
               className="lg:hidden p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -238,7 +238,7 @@ export default function DashboardLayout({ children }) {
           </div>
         </header>
 
-        <main className="flex-1 p-4 sm:p-8 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-8">
           {children}
         </main>
       </div>
