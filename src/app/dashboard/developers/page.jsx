@@ -4,35 +4,16 @@ import React, { useState } from 'react'
 import { useApp } from '@/context/AppContext'
 import { useAuth } from '@/context/AuthContext'
 import { apiPost } from '@/lib/api'
+import { API_URL } from '@/lib/apiUrl'
 import {
   Code2, Key, Webhook, Terminal, Copy, Check, Plus,
   Trash2, Eye, EyeOff, ChevronDown, ChevronUp, Send, Sparkles, ExternalLink,
 } from 'lucide-react'
 
+// Only cURL is real today — there is no published Python or Node package yet.
 const SDK_EXAMPLES = {
-  nodejs: `// Install: npm install @agilepay/sdk
-import { AgilePay } from '@agilepay/sdk';
-
-const client = new AgilePay({ apiKey: process.env.AGILEPAY_KEY });
-const charge = await client.charges.create({
-  amount: 50.00,
-  destination_id: 'YOUR_DESTINATION_ID',
-  description: 'Invoice #1042',
-});`,
-
-  python: `# Install: pip install agilepay
-import agilepay, os
-
-client = agilepay.AgilePay(api_key=os.environ.get("AGILEPAY_KEY"))
-charge = client.charges.create(
-    amount=50.00,
-    destination_id="YOUR_DESTINATION_ID",
-    description="Invoice #1042",
-)
-print(charge["id"])   # chg_xxxxxxxxxxxxxxxxxxxxxx`,
-
-  curl: `curl -X POST https://api.agilepay.io/v1/charges \\
-  -H "Authorization: Bearer sk_live_YOUR_KEY" \\
+  curl: `curl -X POST ${API_URL}/v1/charges \\
+  -H "Authorization: Bearer sk_test_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
     "amount": 50.00,
@@ -41,6 +22,11 @@ print(charge["id"])   # chg_xxxxxxxxxxxxxxxxxxxxxx`,
   }'`,
 }
 
+const SDK_TABS = [
+  { id: 'curl',   label: 'cURL' },
+  { id: 'python', label: 'Python', soon: true },
+]
+
 export default function DeveloperPortalPage() {
   const { apiKeys, createApiKey, deleteApiKey,
           webhookConfig, setWebhookConfig, webhookLogs, isSandbox, showToast,
@@ -48,7 +34,7 @@ export default function DeveloperPortalPage() {
   const { getToken } = useAuth()
 
   const [activeTab, setActiveTab]       = useState('keys')
-  const [activeSdkTab, setActiveSdkTab] = useState('python')
+  const [activeSdkTab, setActiveSdkTab] = useState('curl')
   const [copiedSdk, setCopiedSdk]       = useState(false)
 
   // Key creation
@@ -66,9 +52,14 @@ export default function DeveloperPortalPage() {
   const [expandedLogId, setExpandedLogId]     = useState(webhookLogs[0]?.id || null)
 
   const copySdkSnippet = () => {
-    navigator.clipboard.writeText(SDK_EXAMPLES[activeSdkTab])
+    const snippet = SDK_EXAMPLES[activeSdkTab]
+    if (!snippet) {
+      showToast('Python SDK is coming soon — use the cURL example', 'error')
+      return
+    }
+    navigator.clipboard.writeText(snippet)
     setCopiedSdk(true)
-    showToast('SDK snippet copied')
+    showToast('cURL snippet copied')
     setTimeout(() => setCopiedSdk(false), 2000)
   }
 
@@ -180,12 +171,17 @@ export default function DeveloperPortalPage() {
           <div className="w-full lg:w-[500px] rounded-xl bg-[#090D15] border border-slate-800 shadow-xl overflow-hidden">
             <div className="flex items-center justify-between px-3 py-2 bg-[#0F1422] border-b border-slate-800 text-xs">
               <div className="flex items-center gap-1">
-                {['python', 'nodejs', 'curl'].map((lang) => (
-                  <button key={lang} onClick={() => setActiveSdkTab(lang)}
-                    className={`px-2.5 py-1 rounded font-mono text-[11px] transition-colors ${
-                      activeSdkTab === lang ? 'bg-brand-600 text-white font-bold' : 'text-slate-400 hover:text-white'
+                {SDK_TABS.map((t) => (
+                  <button key={t.id} onClick={() => setActiveSdkTab(t.id)}
+                    className={`px-2.5 py-1 rounded font-mono text-[11px] transition-colors flex items-center gap-1 ${
+                      activeSdkTab === t.id ? 'bg-brand-600 text-white font-bold' : 'text-slate-400 hover:text-white'
                     }`}>
-                    {lang === 'nodejs' ? 'Node.js' : lang === 'python' ? 'Python' : 'cURL'}
+                    <span>{t.label}</span>
+                    {t.soon && (
+                      <span className="px-1 rounded bg-slate-700 text-amber-300 text-[9px] font-bold uppercase tracking-wide">
+                        soon
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -195,9 +191,20 @@ export default function DeveloperPortalPage() {
                 <span>{copiedSdk ? 'Copied' : 'Copy'}</span>
               </button>
             </div>
-            <pre className="p-4 text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed">
-              <code>{SDK_EXAMPLES[activeSdkTab]}</code>
-            </pre>
+            {activeSdkTab === 'python' ? (
+              <div className="p-5 text-xs text-slate-400 space-y-1.5">
+                <p className="font-semibold text-slate-200">Python SDK — coming soon</p>
+                <p>
+                  We&apos;re still building it. Until then, call the same REST endpoint with
+                  <code className="mx-1 text-brand-400">requests.post()</code> — the cURL example
+                  works unchanged from Python.
+                </p>
+              </div>
+            ) : (
+              <pre className="p-4 text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed">
+                <code>{SDK_EXAMPLES[activeSdkTab]}</code>
+              </pre>
+            )}
           </div>
         </div>
       </div>

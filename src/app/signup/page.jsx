@@ -229,7 +229,7 @@ export default function SignUpPage() {
                       icon:  Code2,
                       iconColor: 'text-brand-500',
                       title: 'Developer / Business Platform',
-                      desc:  'API Keys, SDK integration, webhooks, and partner split fee engine.',
+                      desc:  'API Keys, SDK integration, and webhooks.',
                     },
                     {
                       value: 'MERCHANT',
