@@ -120,10 +120,10 @@ export const getLinks = (token) => apiGet('/v1/links', token)
 /** Create a payment link. */
 export const createLink = (payload, token) => apiPost('/v1/links', payload, token)
 
-/** List API keys (DEVELOPER only). */
+/** List API keys (business accounts). */
 export const getApiKeys = (token) => apiGet('/v1/api-keys', token)
 
-/** Create an API key (DEVELOPER only). */
+/** Create an API key (business accounts). */
 export const createApiKey = (payload, token) => apiPost('/v1/api-keys', payload, token)
 
 /** Revoke an API key. */
@@ -136,7 +136,7 @@ export const getDestinations = (apiKey) => apiGet('/v1/destinations', apiKey)
 export const createDestination = (payload, apiKey) =>
   apiPost('/v1/destinations', payload, apiKey)
 
-/** Create a charge (DEVELOPER SDK, uses API key). */
+/** Create a charge (SDK, uses API key). */
 export const createCharge = (payload, apiKey) =>
   apiPost('/v1/charges', payload, apiKey)
 

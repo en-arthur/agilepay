@@ -26,7 +26,7 @@ export function AppProvider({ children }) {
   // ── Derive account type from the authenticated merchant profile ───────────
   // Backend returns "DEVELOPER" | "MERCHANT" | "INDIVIDUAL" (uppercase).
   // Normalise to lowercase so nav/UI comparisons ("developer", "merchant", "individual") work.
-  const rawType = authMerchant?.account_type ?? 'DEVELOPER'
+  const rawType = authMerchant?.account_type ?? 'MERCHANT'
   const accountType = rawType.toLowerCase() // "developer" | "merchant" | "individual"
 
   const token = session?.access_token ?? null
@@ -102,7 +102,7 @@ export function AppProvider({ children }) {
     loadTransactions()
     loadLinks()
     loadDestinations()
-    if (accountType === 'developer') loadApiKeys()
+    if (accountType === 'developer' || accountType === 'merchant') loadApiKeys()
   }, [token, accountType]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Mutations ─────────────────────────────────────────────────────────────
@@ -129,7 +129,7 @@ export function AppProvider({ children }) {
     }
   }
 
-  /** Create an API key — DEVELOPER only */
+  /** Create an API key — business accounts */
   const createApiKey = async (keyName) => {
     if (!token) throw new Error('Not authenticated')
     try {

@@ -8,11 +8,10 @@ import { useAuth } from '@/context/AuthContext'
 import { useApp } from '@/context/AppContext'
 import {
   Zap, Lock, Mail, User, Building, ArrowRight, Sun, Moon,
-  Code2, Smartphone, Check, Wallet,
+  Smartphone, Check, Wallet,
 } from 'lucide-react'
 
 const REDIRECT_MAP = {
-  DEVELOPER:  '/dashboard/developers',
   MERCHANT:   '/dashboard/links',
   INDIVIDUAL: '/dashboard',
 }
@@ -29,7 +28,7 @@ export default function SignUpPage() {
   const [email, setEmail]               = useState('')
   const [password, setPassword]         = useState('')
   // Map UI labels → backend account_type values
-  const [accountType, setAccountType]   = useState('DEVELOPER') // DEVELOPER | MERCHANT | INDIVIDUAL
+  const [accountType, setAccountType]   = useState('MERCHANT') // MERCHANT | INDIVIDUAL
   const [taxId,       setTaxId]         = useState('')
   const [birthDate,   setBirthDate]     = useState('')
   const [acceptedTerms, setAcceptedTerms] = useState(false)
@@ -225,18 +224,11 @@ export default function SignUpPage() {
                 <div className="space-y-3">
                   {[
                     {
-                      value: 'DEVELOPER',
-                      icon:  Code2,
-                      iconColor: 'text-brand-500',
-                      title: 'Developer / Business Platform',
-                      desc:  'API Keys, SDK integration, and webhooks.',
-                    },
-                    {
                       value: 'MERCHANT',
                       icon:  Smartphone,
                       iconColor: 'text-emerald-500',
-                      title: 'Social Seller / Freelancer',
-                      desc:  'No-code payment links, instant settlement, zero integration needed.',
+                      title: 'Merchant / Business',
+                      desc:  'Payment links, API keys, and instant settlement — no code required.',
                     },
                     {
                       value: 'INDIVIDUAL',

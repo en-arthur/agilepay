@@ -315,14 +315,14 @@ export default function SettingsPage() {
               <div className="p-5 rounded-2xl border border-brand-500/30 bg-brand-500/5 dark:bg-brand-950/20">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center">
-                    {accountType === 'developer' ? <Code2 className="w-5 h-5" /> : <Smartphone className="w-5 h-5" />}
+                    {accountType === 'individual' ? <Smartphone className="w-5 h-5" /> : <Code2 className="w-5 h-5" />}
                   </div>
                   <div>
                     <p className="font-bold text-slate-900 dark:text-white capitalize">{accountType} Account</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      {accountType === 'developer'
-                        ? 'API keys, SDK, and webhooks enabled'
-                        : 'No-code payment links and instant settlement'}
+                      {accountType === 'individual'
+                        ? 'Remittance account'
+                        : 'Payment links, API keys, SDK, and webhooks enabled'}
                     </p>
                   </div>
                   <CheckCircle2 className="w-5 h-5 text-emerald-500 ml-auto" />
