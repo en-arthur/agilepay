@@ -160,7 +160,9 @@ export default function HostedCheckoutPage() {
         payer_phone:  buyerPhone || null,
         amount_cents: linkData?.is_fixed_amount ? undefined : resolvedAmountCents,
       })
-      setCollection(result)
+      // POST returns `collection_id`; the status endpoint returns `id`.
+      // Normalise so polling can start immediately.
+      setCollection({ ...result, id: result.collection_id || result.id })
     } catch (err) {
       setSubmitError(err.message)
     } finally {
