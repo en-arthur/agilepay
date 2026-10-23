@@ -471,6 +471,10 @@ function DestinationsSection({ destinations, loading, onRefresh, onAdd, onRemove
   // Holder / bank — required by non-PIX/SPEI rails
   const [holderTaxId,  setHolderTaxId]  = useState('')
   const [holderCountry, setHolderCountry] = useState('')
+  const [holderLine1,  setHolderLine1]  = useState('')
+  const [holderCity,   setHolderCity]   = useState('')
+  const [holderState,  setHolderState]  = useState('')
+  const [holderPostal, setHolderPostal] = useState('')
   const [bankName,     setBankName]     = useState('')
   const [bankCountry,  setBankCountry]  = useState('')
   const [bankLine1,    setBankLine1]    = useState('')
@@ -497,6 +501,12 @@ function DestinationsSection({ destinations, loading, onRefresh, onAdd, onRemove
       if (needsHolder) {
         payload.holder_tax_id = holderTaxId || undefined
         payload.holder_address_country = holderCountry || undefined
+        if (needsFullBankAddress) {
+          payload.holder_address_line1 = holderLine1 || undefined
+          payload.holder_address_city = holderCity || undefined
+          payload.holder_address_state = holderState || undefined
+          payload.holder_address_postal_code = holderPostal || undefined
+        }
         payload.bank_name = bankName || undefined
         payload.bank_address_country = bankCountry || undefined
         if (needsFullBankAddress) {
@@ -510,6 +520,7 @@ function DestinationsSection({ destinations, loading, onRefresh, onAdd, onRemove
       setShowModal(false)
       setLabel(''); setHolderName(''); setCountry('US'); setIdentifier({})
       setHolderTaxId(''); setHolderCountry('')
+      setHolderLine1(''); setHolderCity(''); setHolderState(''); setHolderPostal('')
       setBankName(''); setBankCountry('')
       setBankLine1(''); setBankCity(''); setBankState(''); setBankPostal('')
     } catch (err) {
@@ -710,6 +721,41 @@ function DestinationsSection({ destinations, loading, onRefresh, onAdd, onRemove
                       className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white font-mono text-xs uppercase focus:outline-none focus:ring-2 focus:ring-violet-500"
                     />
                   </div>
+
+                  {needsFullBankAddress && (
+                    <>
+                      <div>
+                        <label className="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">Holder Address Line 1 *</label>
+                        <input type="text" required value={holderLine1} onChange={e => setHolderLine1(e.target.value)}
+                          placeholder="e.g. 12 High Street"
+                          className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-violet-500"
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <label className="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">City *</label>
+                          <input type="text" required value={holderCity} onChange={e => setHolderCity(e.target.value)}
+                            placeholder="Accra"
+                            className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-violet-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">State *</label>
+                          <input type="text" required value={holderState} onChange={e => setHolderState(e.target.value)}
+                            placeholder="GA"
+                            className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-violet-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">Postal *</label>
+                          <input type="text" required value={holderPostal} onChange={e => setHolderPostal(e.target.value)}
+                            placeholder="GA-123"
+                            className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-violet-500"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                   <p className="text-xs font-bold text-violet-700 dark:text-violet-400 uppercase tracking-wider pt-1">Bank</p>
                   <div>
