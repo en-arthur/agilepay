@@ -251,20 +251,6 @@ export function AppProvider({ children }) {
     secret: '',
   })
   const [webhookLogs, setWebhookLogs] = useState([])
-  const [partnerFee, setPartnerFee] = useState({
-    percentage:    1.0,
-    partnerFeeId:  '',
-  })
-
-  // ── Populate webhook / partner fee from merchant profile ─────────────────
-  useEffect(() => {
-    if (authMerchant) {
-      setPartnerFee((prev) => ({
-        ...prev,
-        partnerFeeId: `pfee_${authMerchant.id?.substring(0, 8) ?? 'agile'}`,
-      }))
-    }
-  }, [authMerchant])
 
   const value = {
     // auth-derived
@@ -312,13 +298,11 @@ export function AppProvider({ children }) {
     sendRemittance,
     getRemittanceHistory,
 
-    // webhook / partner
+    // webhook
     webhookConfig,
     setWebhookConfig,
     webhookLogs,
     setWebhookLogs,
-    partnerFee,
-    setPartnerFee,
 
     // toast
     toastMessage,

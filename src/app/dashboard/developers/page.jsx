@@ -5,7 +5,7 @@ import { useApp } from '@/context/AppContext'
 import { useAuth } from '@/context/AuthContext'
 import { apiPost } from '@/lib/api'
 import {
-  Code2, Key, Webhook, Percent, Terminal, Copy, Check, Plus,
+  Code2, Key, Webhook, Terminal, Copy, Check, Plus,
   Trash2, Eye, EyeOff, ChevronDown, ChevronUp, Send, Sparkles, ExternalLink,
 } from 'lucide-react'
 
@@ -42,7 +42,7 @@ print(charge["id"])   # chg_xxxxxxxxxxxxxxxxxxxxxx`,
 }
 
 export default function DeveloperPortalPage() {
-  const { apiKeys, createApiKey, deleteApiKey, partnerFee, setPartnerFee,
+  const { apiKeys, createApiKey, deleteApiKey,
           webhookConfig, setWebhookConfig, webhookLogs, isSandbox, showToast,
           loadingApiKeys } = useApp()
   const { getToken } = useAuth()
@@ -58,10 +58,6 @@ export default function DeveloperPortalPage() {
   const [visibleKeyId, setVisibleKeyId] = useState(null)
   const [copiedKeyId, setCopiedKeyId]   = useState(null)
   const [newKeyPlain, setNewKeyPlain]   = useState(null)  // raw key shown once
-
-  // Partner fee
-  const [feeRate, setFeeRate]       = useState(partnerFee.percentage.toString())
-  const [isSavingFee, setIsSavingFee] = useState(false)
 
   // Webhook
   const [webhookUrl, setWebhookUrl]           = useState(webhookConfig.url)
@@ -98,17 +94,6 @@ export default function DeveloperPortalPage() {
     } finally {
       setCreatingKey(false)
     }
-  }
-
-  const handleSavePartnerFee = (e) => {
-    e.preventDefault()
-    setIsSavingFee(true)
-    const newId = `pfee_agile_v2_${Math.floor(100000 + Math.random() * 900000)}`
-    setPartnerFee({ percentage: Number(feeRate), partnerFeeId: newId })
-    setTimeout(() => {
-      setIsSavingFee(false)
-      showToast(`Commission updated to ${feeRate}%`)
-    }, 400)
   }
 
   const handleSaveWebhooks = (e) => {
@@ -223,7 +208,6 @@ export default function DeveloperPortalPage() {
         <div className="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto">
           {[
             { id: 'keys',    label: 'API Keys',           icon: Key },
-            { id: 'partner', label: 'Partner Fees',       icon: Percent },
             { id: 'webhooks',label: 'Webhooks',           icon: Webhook },
             { id: 'logs',    label: 'Webhook Logs',       icon: Terminal },
           ].map((tab) => {
@@ -324,61 +308,6 @@ export default function DeveloperPortalPage() {
                 })}
               </div>
             )}
-          </div>
-        )}
-
-        {/* ── Tab: Partner Fees ── */}
-        {activeTab === 'partner' && (
-          <div className="p-6 sm:p-8 max-w-2xl space-y-6">
-            <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">Platform Commission</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Automatically charge a percentage on every transaction before funds settle to your bank.
-              </p>
-            </div>
-            <form onSubmit={handleSavePartnerFee} className="space-y-5">
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
-                  Commission Percentage (%)
-                </label>
-                <div className="relative w-48">
-                  <input type="number" step="0.1" min="0" max="10"
-                    value={feeRate} onChange={(e) => setFeeRate(e.target.value)}
-                    className="w-full pl-3.5 pr-8 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white font-bold text-base focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  />
-                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">%</span>
-                </div>
-              </div>
-
-              {partnerFee.partnerFeeId && (
-                <div className="p-4 rounded-xl bg-brand-50/50 dark:bg-brand-950/30 border border-brand-500/20 space-y-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">
-                    Active Partner Fee ID
-                  </span>
-                  <div className="flex items-center justify-between font-mono text-xs bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-brand-500/30">
-                    <span className="text-slate-800 dark:text-slate-200 font-bold">{partnerFee.partnerFeeId}</span>
-                    <span className="text-emerald-500 font-semibold">{partnerFee.percentage}%</span>
-                  </div>
-                </div>
-              )}
-
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-xs space-y-1.5">
-                <p className="font-semibold text-slate-700 dark:text-slate-300">Example on $100:</p>
-                <div className="flex justify-between text-brand-600 dark:text-brand-400">
-                  <span>Your split ({feeRate}%):</span>
-                  <span className="font-bold">+${((100 * Number(feeRate || 0)) / 100).toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
-                  <span>Merchant receives:</span>
-                  <span className="font-bold">${(100 - (100 * Number(feeRate || 0)) / 100).toFixed(2)}</span>
-                </div>
-              </div>
-
-              <button type="submit" disabled={isSavingFee}
-                className="py-2.5 px-5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition-all shadow-glow-sm disabled:opacity-60">
-                {isSavingFee ? 'Saving…' : 'Update Commission'}
-              </button>
-            </form>
           </div>
         )}
 
