@@ -9,7 +9,7 @@ import {
   Lock, ArrowRight, Sun, Moon, Zap, Check, AlertCircle,
 } from 'lucide-react'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL
+import { API_URL } from '@/lib/apiUrl'
 
 async function fetchLink(linkId) {
   const res = await fetch(`${API_URL}/pay/${linkId}`)

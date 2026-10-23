@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { apiPost } from '@/lib/api'
+import { API_URL } from '@/lib/apiUrl'
 
 const AuthContext = createContext(null)
 
@@ -96,7 +97,6 @@ export function useAuth() {
 
 // ── Small helper — import apiGet inside this file avoids circular dep ────────
 async function apiGet(path, token) {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL
   const res = await fetch(`${API_URL}${path}`, {
     headers: {
       'Content-Type': 'application/json',

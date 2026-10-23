@@ -95,7 +95,7 @@ export default function PaymentDrawer({ isOpen, onClose }) {
   }
 
   const shareUrl = createdLink
-    ? `${process.env.NEXT_PUBLIC_API_URL?.replace(':8000', ':3000') ?? ''}/pay/${createdLink.link_id || createdLink.id}`
+    ? `${typeof window !== 'undefined' ? window.location.origin : ''}/pay/${createdLink.link_id || createdLink.id}`
     : ''
 
   const handleCopyLink = () => {

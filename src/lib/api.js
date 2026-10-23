@@ -11,7 +11,7 @@
  *   const charge = await apiPost('/v1/charges', payload, 'sk_test_xxx')
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL // e.g. https://agilepay-api.railway.app
+import { API_URL } from '@/lib/apiUrl'
 
 /**
  * Build request headers.

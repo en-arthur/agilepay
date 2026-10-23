@@ -1,0 +1,1 @@
+{"detail":"Failed to provision payment account: {\"requestId\":\"ccf6da25-217a-431c-9d18-056571fd4cda\",\"timestamp\":\"2026-10-23T16:05:16.175Z\",\"path\":\"/customers\",\"status\":400,\"code\":\"BAD_REQUEST\",\"message\":\"Account currencies not allowed for this project: BRL. Allowed: USD, EUR, MXN, GBP\"}"}
