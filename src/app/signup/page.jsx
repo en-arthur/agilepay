@@ -56,6 +56,10 @@ export default function SignUpPage() {
       setError('Please accept the Terms of Service to continue')
       return
     }
+    if (!taxId.trim() || !birthDate) {
+      setError('Tax ID and date of birth are required for identity verification')
+      return
+    }
     setIsLoading(true)
     setError('')
 
@@ -69,8 +73,9 @@ export default function SignUpPage() {
         business_type: 'INDIVIDUAL',
         country:       'GH',
         account_type:  accountType,
-        // INDIVIDUAL-only fields — ignored by backend for other types
-        ...(accountType === 'INDIVIDUAL' && { tax_id: taxId, birth_date: birthDate }),
+        // Required by Lumx for every customer (KYC)
+        tax_id:     taxId,
+        birth_date: birthDate,
       })
 
       showToast(`Welcome to AgilePay, ${fullName}! Signing you in…`)
@@ -264,17 +269,16 @@ export default function SignUpPage() {
                 </div>
               </div>
 
-              {/* INDIVIDUAL extra fields */}
-              {accountType === 'INDIVIDUAL' && (
-                <div className="space-y-3 p-4 rounded-xl bg-violet-50 dark:bg-violet-950/20 border border-violet-200 dark:border-violet-800">
+              {/* Identity verification — required for every account type */}
+              <div className="space-y-3 p-4 rounded-xl bg-violet-50 dark:bg-violet-950/20 border border-violet-200 dark:border-violet-800">
                   <p className="text-xs font-bold text-violet-700 dark:text-violet-400 uppercase tracking-wider">
-                    Required for Remittance Accounts
+                    Identity Verification (required)
                   </p>
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
                       Tax ID / National ID *
                     </label>
-                    <input type="text" required={accountType === 'INDIVIDUAL'}
+                    <input type="text" required
                       value={taxId} onChange={e => setTaxId(e.target.value)}
                       placeholder="e.g. SSN, CPF, or national ID number"
                       className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
@@ -284,13 +288,12 @@ export default function SignUpPage() {
                     <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
                       Date of Birth *
                     </label>
-                    <input type="date" required={accountType === 'INDIVIDUAL'}
+                    <input type="date" required
                       value={birthDate} onChange={e => setBirthDate(e.target.value)}
                       className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
                     />
                   </div>
                 </div>
-              )}
 
               <label className="flex items-start gap-3 cursor-pointer pt-2">
                 <input type="checkbox" checked={acceptedTerms}
