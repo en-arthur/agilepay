@@ -12,14 +12,22 @@ import {
 
 // Only cURL is real today — there is no published Python or Node package yet.
 const SDK_EXAMPLES = {
-  curl: `curl -X POST ${API_URL}/v1/charges \\
+  curl: `# 1. Create a collection — returns the bank details to show your customer
+curl -X POST ${API_URL}/v1/collections \\
   -H "Authorization: Bearer sk_test_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "amount": 50.00,
-    "destination_id": "YOUR_DESTINATION_ID",
-    "description": "Invoice #1042"
-  }'`,
+    "amount": 100.00,
+    "currency": "USD",
+    "rail": "SWIFT",
+    "reference_id": "inv-1042",
+    "description": "Invoice #1042",
+    "payer_email": "customer@example.com"
+  }'
+
+# 2. Poll until the payer's transfer lands
+curl ${API_URL}/v1/collections/col_xxxxxxxxxxxxxxxxxxxx \\
+  -H "Authorization: Bearer sk_test_YOUR_KEY"`,
 }
 
 const SDK_TABS = [
