@@ -424,6 +424,9 @@ function normaliseStatus(status) {
 
 function normaliseLinks(data) {
   if (!Array.isArray(data)) return []
+  // Checkout URLs must point at the app the merchant is actually using —
+  // a hardcoded marketing domain here produced dead links.
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
   return data.map((lnk) => ({
     id:            lnk.link_id,
     title:         lnk.title,
@@ -432,7 +435,7 @@ function normaliseLinks(data) {
     localAmount:   lnk.amount_cents ? (lnk.amount_cents / 100) * 15.5 : 0,
     localCurrency: 'GHS',
     destination:   lnk.default_destination_id || 'Default destination',
-    shortUrl:      `agilepay.me/pay/${lnk.link_id}`,
+    shortUrl:      `${origin}/pay/${lnk.link_id}`,
     status:        lnk.is_active ? 'Active' : 'Inactive',
     views:         0,
     paymentsCount: lnk.use_count || 0,

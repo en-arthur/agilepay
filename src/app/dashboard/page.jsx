@@ -37,7 +37,7 @@ export default function MerchantDashboard() {
   })
 
   const handleCopyLink = (shortUrl) => {
-    navigator.clipboard.writeText(`https://${shortUrl}`)
+    navigator.clipboard.writeText(shortUrl)
     setCopiedLink(shortUrl)
     showToast(`Copied ${shortUrl} to clipboard`)
     setTimeout(() => setCopiedLink(null), 2000)

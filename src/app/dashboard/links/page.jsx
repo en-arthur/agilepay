@@ -40,7 +40,7 @@ export default function PaymentLinksPage() {
   const totalVolume   = links.reduce((s, l) => s + l.amount * (l.paymentsCount || 0), 0)
 
   const handleCopyLink = (shortUrl) => {
-    navigator.clipboard.writeText(`https://${shortUrl}`)
+    navigator.clipboard.writeText(shortUrl)
     setCopiedLink(shortUrl)
     showToast(`Copied ${shortUrl} to clipboard`)
     setTimeout(() => setCopiedLink(null), 2000)
@@ -258,7 +258,7 @@ export default function PaymentLinksPage() {
               <button onClick={() => setQrPreviewLink(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">✕</button>
             </div>
             <div className="flex flex-col items-center p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
-              <QRCodePreview value={`https://${qrPreviewLink.shortUrl}`} size={160} />
+              <QRCodePreview value={qrPreviewLink.shortUrl} size={160} />
               <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-3">
                 Scan to pay ${qrPreviewLink.amount} {qrPreviewLink.currency}
               </p>
