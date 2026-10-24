@@ -42,7 +42,7 @@ export default function PaymentDrawer({ isOpen, onClose }) {
     const token = getToken()
     if (!token) return
     setLoadingDests(true)
-    apiGet('/v1/destinations', token)
+    apiGet('/v1/destinations/dashboard', token)
       .then(data => {
         const approved = (data || []).filter(d => d.status === 'APPROVED')
         setDestinations(approved)
@@ -180,7 +180,11 @@ export default function PaymentDrawer({ isOpen, onClose }) {
                   <div className="grid grid-cols-3 gap-2">
                     <div className="col-span-2 relative">
                       <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
-                        {currency === 'USD' ? '$' : currency === 'EUR' ? '€' : 'GH₵'}
+                        {currency === 'USD' ? '$'
+                          : currency === 'GBP' ? '£'
+                          : currency === 'EUR' ? '€'
+                          : currency === 'MXN' ? 'MX$'
+                          : 'R$'}
                       </span>
                       <input type="number" step="0.01" min="0.01" required={isFixed}
                         value={amount} onChange={e => setAmount(e.target.value)}
@@ -191,8 +195,10 @@ export default function PaymentDrawer({ isOpen, onClose }) {
                     <select value={currency} onChange={e => setCurrency(e.target.value)}
                       className="py-3 px-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white font-medium text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
                       <option value="USD">USD</option>
-                      <option value="GHS">GHS</option>
+                      <option value="GBP">GBP</option>
                       <option value="EUR">EUR</option>
+                      <option value="MXN">MXN</option>
+                      <option value="BRL">BRL</option>
                     </select>
                   </div>
                 </div>
@@ -230,22 +236,25 @@ export default function PaymentDrawer({ isOpen, onClose }) {
                 ) : destinations.length === 0 ? (
                   <div className="p-3 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 text-xs text-amber-700 dark:text-amber-400 flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 shrink-0" />
-                    No approved destinations yet. Add one in Settings → Destinations.
+                    No approved destinations yet. Add one in Settings → Payout Destinations.
+                    Funds will stay in your USDC balance until you do.
                   </div>
                 ) : (
                   <select value={destinationId} onChange={e => setDestinationId(e.target.value)}
                     className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                    <option value="">— Use merchant default —</option>
+                    <option value="">— Keep funds as USDC (manual payout) —</option>
                     {destinations.map(d => (
                       <option key={d.id} value={d.id}>
-                        {d.label} ({d.rail} · {d.currency}){d.is_default ? ' ★' : ''}
+                        {d.label || d.holder_name} ({d.rail} · {d.currency}){d.is_default ? ' ★' : ''}
                       </option>
                     ))}
                   </select>
                 )}
                 <p className="text-xs text-slate-400 mt-1.5 flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                  Funds auto off-ramped to this destination on payment
+                  {destinationId
+                    ? 'Each payment is automatically sent to this bank account'
+                    : 'Payments stay in your USDC balance until you pay out'}
                 </p>
               </div>
 
