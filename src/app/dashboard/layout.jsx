@@ -10,7 +10,7 @@ import PaymentDrawer from '@/components/PaymentDrawer'
 import {
   Zap, LayoutDashboard, Link2, ArrowLeftRight, Code2, Settings,
   Sun, Moon, Bell, Plus, LogOut, ExternalLink, Menu, X, Smartphone,
-  Wallet,
+  Wallet, Send,
 } from 'lucide-react'
 
 export default function DashboardLayout({ children }) {
@@ -55,17 +55,18 @@ export default function DashboardLayout({ children }) {
     { label: 'Dashboard',       href: '/dashboard',              icon: LayoutDashboard },
     { label: 'Payment Links',   href: '/dashboard/links',        icon: Link2 },
     { label: 'Transactions',    href: '/dashboard/transactions', icon: ArrowLeftRight },
+    { label: 'Payouts',         href: '/dashboard/payouts',      icon: Send },
     { label: 'Developer Portal',href: '/dashboard/developers',   icon: Code2 },
     { label: 'Remittance',      href: '/dashboard/remittance',   icon: Wallet },
     { label: 'Settings',        href: '/dashboard/settings',     icon: Settings },
   ]
 
-  // developer → hide Payment Links + Remittance
+  // developer → hide Payment Links + Remittance + Payouts
   // merchant  → hide Developer Portal + Remittance
-  // individual → hide Developer Portal + Payment Links
+  // individual → hide Developer Portal + Payment Links + Payouts
   const navItems = allNavItems.filter(i => {
-    if (accountType === 'developer')  return i.href !== '/dashboard/links' && i.href !== '/dashboard/remittance'
-    if (accountType === 'individual') return i.href !== '/dashboard/developers' && i.href !== '/dashboard/links'
+    if (accountType === 'developer')  return i.href !== '/dashboard/links' && i.href !== '/dashboard/remittance' && i.href !== '/dashboard/payouts'
+    if (accountType === 'individual') return i.href !== '/dashboard/developers' && i.href !== '/dashboard/links' && i.href !== '/dashboard/payouts'
     return i.href !== '/dashboard/developers' && i.href !== '/dashboard/remittance'
   })
 

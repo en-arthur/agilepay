@@ -18,10 +18,13 @@ export function AppProvider({ children }) {
   const [transactions, setTransactions] = useState([])
   const [apiKeys, setApiKeys]           = useState([])
   const [destinations, setDestinations] = useState([])
+  const [payouts, setPayouts]           = useState([])
+  const [payoutBalance, setPayoutBalance] = useState(null)
   const [loadingLinks, setLoadingLinks]               = useState(false)
   const [loadingTransactions, setLoadingTransactions] = useState(false)
   const [loadingApiKeys, setLoadingApiKeys]           = useState(false)
   const [loadingDestinations, setLoadingDestinations] = useState(false)
+  const [loadingPayouts, setLoadingPayouts]           = useState(false)
 
   // ── Derive account type from the authenticated merchant profile ───────────
   // Backend returns "DEVELOPER" | "MERCHANT" | "INDIVIDUAL" (uppercase).
@@ -90,6 +93,29 @@ export function AppProvider({ children }) {
     }
   }, [token])
 
+  // ── Payouts (off-ramp) — no-code merchant dashboard ───────────────────────
+  const loadPayouts = useCallback(async () => {
+    if (!token) return
+    setLoadingPayouts(true)
+    try {
+      const data = await apiGet('/v1/charges/dashboard?limit=20', token)
+      setPayouts(Array.isArray(data) ? data : [])
+    } catch (e) {
+      console.error('loadPayouts:', e)
+    } finally {
+      setLoadingPayouts(false)
+    }
+  }, [token])
+
+  const loadPayoutBalance = useCallback(async () => {
+    if (!token) return
+    try {
+      setPayoutBalance(await apiGet('/v1/charges/dashboard/balance', token))
+    } catch (e) {
+      console.error('loadPayoutBalance:', e)
+    }
+  }, [token])
+
   // ── Bootstrap on session ready ────────────────────────────────────────────
   useEffect(() => {
     if (!token) {
@@ -97,12 +123,15 @@ export function AppProvider({ children }) {
       setTransactions([])
       setApiKeys([])
       setDestinations([])
+      setPayouts([])
+      setPayoutBalance(null)
       return
     }
     loadTransactions()
     loadLinks()
     loadDestinations()
     if (accountType === 'developer') loadApiKeys()
+    if (accountType === 'merchant') { loadPayouts(); loadPayoutBalance() }
   }, [token, accountType]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Mutations ─────────────────────────────────────────────────────────────
@@ -198,6 +227,27 @@ export function AppProvider({ children }) {
     showToast('Default destination updated')
   }
 
+  // ── Payout mutations (off-ramp, merchant dashboard) ──────────────────────
+
+  /** Send USDC to an approved bank destination */
+  const createPayout = async ({ amount, destination_id, description, reference_id }) => {
+    if (!token) throw new Error('Not authenticated')
+    try {
+      const created = await apiPost('/v1/charges/dashboard', {
+        amount:         Number(amount),
+        destination_id,
+        description:    description || null,
+        reference_id:   reference_id || null,
+      }, token)
+      await Promise.all([loadPayouts(), loadPayoutBalance()])
+      showToast(`Payout started: ${created.id}`)
+      return created
+    } catch (e) {
+      showToast(e.message || 'Payout failed', 'error')
+      throw e
+    }
+  }
+
   // ── Remittance mutations (INDIVIDUAL accounts) ────────────────────────────
 
   const submitRemittanceKyc = async (payload) => {
@@ -265,16 +315,21 @@ export function AppProvider({ children }) {
     transactions,
     apiKeys,
     destinations,
+    payouts,
+    payoutBalance,
     loadingLinks,
     loadingTransactions,
     loadingApiKeys,
     loadingDestinations,
+    loadingPayouts,
 
     // refresh
     loadLinks,
     loadTransactions,
     loadApiKeys,
     loadDestinations,
+    loadPayouts,
+    loadPayoutBalance,
 
     // link mutations
     createPaymentLink,
@@ -288,6 +343,9 @@ export function AppProvider({ children }) {
     addDestination,
     removeDestination,
     setDefaultDestination,
+
+    // payout mutations (off-ramp)
+    createPayout,
 
     // remittance mutations
     submitRemittanceKyc,
