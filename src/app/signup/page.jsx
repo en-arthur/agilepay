@@ -228,7 +228,7 @@ export default function SignUpPage() {
                       icon:  Smartphone,
                       iconColor: 'text-emerald-500',
                       title: 'Merchant / Business',
-                      desc:  'Payment links, API keys, and instant settlement — no code required.',
+                      desc:  'No-code payment links, instant settlement, zero integration needed.',
                     },
                     {
                       value: 'INDIVIDUAL',

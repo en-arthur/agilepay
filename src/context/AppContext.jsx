@@ -102,7 +102,7 @@ export function AppProvider({ children }) {
     loadTransactions()
     loadLinks()
     loadDestinations()
-    if (accountType === 'developer' || accountType === 'merchant') loadApiKeys()
+    if (accountType === 'developer') loadApiKeys()
   }, [token, accountType]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Mutations ─────────────────────────────────────────────────────────────
@@ -129,7 +129,7 @@ export function AppProvider({ children }) {
     }
   }
 
-  /** Create an API key — business accounts */
+  /** Create an API key — DEVELOPER only (legacy) */
   const createApiKey = async (keyName) => {
     if (!token) throw new Error('Not authenticated')
     try {

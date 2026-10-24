@@ -61,12 +61,12 @@ export default function DashboardLayout({ children }) {
   ]
 
   // developer → hide Payment Links + Remittance
-  // merchant  → hide Remittance (merchant accounts also get API keys)
+  // merchant  → hide Developer Portal + Remittance
   // individual → hide Developer Portal + Payment Links
   const navItems = allNavItems.filter(i => {
     if (accountType === 'developer')  return i.href !== '/dashboard/links' && i.href !== '/dashboard/remittance'
     if (accountType === 'individual') return i.href !== '/dashboard/developers' && i.href !== '/dashboard/links'
-    return i.href !== '/dashboard/remittance'
+    return i.href !== '/dashboard/developers' && i.href !== '/dashboard/remittance'
   })
 
   const Sidebar = () => (
